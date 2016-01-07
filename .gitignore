@@ -1,0 +1,35 @@
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+pkg/
+*.ignore
+
+# Berkshelf
+.vagrant
+/cookbooks
+
+# Bundler
+Gemfile.lock
+bin/*
+.bundle/*
+
+.kitchen/
+.kitchen.local.yml
+
+# chefspec
+.coverage/
+
+# misc
+.DS_Store
+
+# chef
+.chef/
+
+# data bag secret
+.encrypted_data_bag_secret
+encrypted_data_bag_secret
+
+Berksfile.lock

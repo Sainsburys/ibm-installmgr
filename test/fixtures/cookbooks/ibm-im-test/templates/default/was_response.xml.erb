@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ##### Copyright ######################################################
+# Licensed Materials - Property of IBM (c) Copyright IBM Corp. 2012.
+# All Rights Reserved. US Government Users Restricted Rights-Use, duplication
+# or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+####################################################################### -->
+
+<!-- ##### Frequently Asked Questions #####################################
+# The latest information about using Installation Manager is
+# located in the online Information Center. There you can find
+# information about the commands and attributes used in
+# silent installation response files.
+#
+#     Installation Manager Information Center can be found at:
+#     http://publib.boulder.ibm.com/infocenter/install/v1r5/index.jsp
+#
+# Question 1. How do I record a response file using Installation Manager?
+# Answer 1. Start Installation Manager from the command line under the
+# eclipse subdirectory with the record parameter and it will generate a
+# response file containing actions it performed, repositories it used, and
+# its preferences settings. Optionally use the -skipInstall parameter if
+# you do not want the product to be installed to the machine. Specify a
+# new agentDataLocation location value when doing a new installation. Do
+# not use an existing agentDataLocation for an installation because it might
+# damage the installation data and prevent you from modifying, updating,
+# rolling back, or uninstalling the installed packages.
+#
+# Windows: IBMIM -record <responseFile> -skipInstall <agentDataLocation>
+# Linux or UNIX: ./IBMIM -record <responseFile> -skipInstall <agentDataLocation>
+#
+# For example:
+#   Windows = IBMIM.exe -record c:\temp\responsefiles\WASv85.install.Win32.xml
+#     -skipInstall c:\temp\skipInstall\WebSphere_Temp_Registry
+#   Linux or UNIX = ./IBMIM -record /home/user/responsefiles/WASv85.install.RHEL64.xml
+#     -skipInstall c:\temp\skipInstall\WebSphere_Temp_Registry
+#
+# Question 2. How do I run Installation Manager silently using response file?
+# Answer 2. Create a silent installation response file and run the following command
+# from the eclipse\tools subdirectory in the directory where you installed
+# Installation Manager:
+#
+#   Windows = imcl.exe -acceptLicense -showProgress
+#     input <response_file_path_and_name> -log <log_file_path_and_name>
+#   Linux, UNIX, IBM i and z/OS = ./imcl -acceptLicense -showProgress
+#     input <response_file_path_and_name> -log <log_file_path_and_name>
+#
+# For example:
+#   Windows = imcl.exe -acceptLicense -showProgress
+#     input c:\temp\responsefile\WASv85.install.Win32.xml
+#   Linux, UNIX, IBM i and z/OS = ./imcl -acceptLicense -showProgress
+#     input /home/user/responsefile/WASv85.install.RHEL64.xml
+#
+# The -acceptLicense command must be included to indicate acceptance of all
+#     license agreements of all offerings being installed, updated or modified.
+# The -showProgress command shows progress when running in silent mode.
+# Additional commands can be displayed by requesting help:  IBMIM -help
+#
+# Question 3. How do I store and pass credentials to repositories that
+# require authentication?
+# Answer 3. Installation Manager uses a key ring file to store encrypted
+# credentials for authenticating with repositories. Follow this two-step
+# process for creating and using a key ring file with Installation Manager.
+#
+# First, create a key ring file with your credentials by starting
+# Installation Manager from the command line under eclipse subdirectory
+# with the keyring parameter.
+# Use the optional password parameter to password protect your file.
+#
+#   Windows = IBMIM.exe -keyring <path and file name> -password <password>
+#   Linux, UNIX, IBM i and z/OS = ./IBMIM -keyring <path and file name>
+#                                 -password <password>
+#
+# Installation Manager will start in graphical mode. Verify that the
+# repositories to which you need to authenticate are included in the
+# preferences, File / Preferences / Repositories. If they are not
+# listed, then click Add Repositories to add the URL or UNC path.
+# Installation Manager will prompt for your credentials. If the repository
+# is already in the list, then any attempt to access the repository location,
+# such as clicking the Test Connections button, will also prompt for your
+# credentials. Enter the correct credential and check the Save password
+# checkbox. The credentials are saved to the key ring file you specified.
+#
+# Second, when you start a silent installation, run imcl under eclipse/tools
+# subdirectory, and provide Installation Manager with the location of the key
+# ring file and the password if the file is protected. For example:
+#
+#   Windows = imcl.exe -acceptLicense -showProgress
+#     input <path and file name of response file>
+#     -keyring <path and name of key ring file> -password <password>
+#   Linux, UNIX, IBM i and z/OS = ./imcl -acceptLicense -showProgress
+#     input <path and file name of response file>
+#     -keyring <path and name of key ring file> -password <password>
+#
+####################################################################### -->
+
+<!-- ##### Agent Input ##############################################
+#
+# Note that the acceptLicense attribute has been deprecated.
+# Use the -acceptLicense command line option to accept license agreements.
+#
+# The clean and temporary attributes specify the repositories and other
+# preferences Installation Manager uses and whether those settings
+# should persist after the installation finishes.
+#
+# Valid values for clean:
+#      true = only use the repositories and other preferences that are
+#           specified in the response file.
+#      false = use the repositories and other preferences that are
+#           specified in the response file and Installation Manager.
+#
+# Valid values for temporary:
+#      true = repositories and other preferences specified in the
+#           response file do not persist in Installation Manager.
+#      false = repositories and other preferences specified in the
+#           response file persist in Installation Manager.
+#
+####################################################################### -->
+
+<agent-input clean="true" temporary="true">
+
+<!-- ##### Repositories ###################################################
+# Repositories are locations that Installation Manager queries for
+# installable packages. Repositories can be local (on the machine
+# with Installation Manager) or remote (on a corporate intranet or
+# hosted elsewhere on the internet).
+#
+# If the machine using this response file has access to the internet,
+# then include the IBM WebSphere Live Update Repositories in the list
+# of repository locations.
+#
+# If the machine using this response file cannot access the internet,
+# then comment out the IBM WebSphere Live Update Repositories and
+# specify the URL or UNC path to custom intranet repositories and
+# directory paths to local repositories to use.
+#
+####################################################################### -->
+
+<server>
+    <!-- ##### IBM WebSphere Live Update Repositories ####################
+     # These repositories contain WebSphere Application Server offerings,
+     # and updates for those offerings
+     #
+     # To use the secure repository (https), you must have an IBM ID,
+     # which can be obtained by registering at: http://www.ibm.com/account
+     # or your Passport Advantage account.
+     #
+     # And, you must use a key ring file with your response file.
+     ################################################################## -->
+    <repository location="/opt/ibm-media/WASND" />
+    <!-- <repository location="https://www.ibm.com/software/rational/repositorymanager/repositories/websphere" /> -->
+
+    <!-- ##### Custom Repositories #######################################
+     # Uncomment and update the repository location key below
+     # to specify URLs or UNC paths to any intranet repositories
+     # and directory paths to local repositories to use.
+     ################################################################## -->
+    <!-- <repository location='https:\\w3.mycompany.com\repositories\'/> -->
+    <!-- <repository location='/home/user/repositories/websphere/'/> -->
+
+    <!-- ##### Local Repositories ########################################
+     # Uncomment and update the following line when using a local
+     # repository located on your own machine to install a
+     # WebSphere Application Server offering.
+     ############################################################# -->
+    <!-- <repository location='insert the full directory path inside single quotes'/> -->
+</server>
+
+<!-- ##### Install Packages ###############################################
+#
+# Install Command
+#
+# Use the install command to inform Installation Manager of the
+# installation packages to install.
+#
+# The modify attribute is optional and can be paired with an install
+# command to add features or paired with an uninstall command to
+# remove commands. If omitted, the default value is set to false.
+#    false = indicates not to modify an existing install by adding
+#            or removing features.
+#    true = indicates to modify an existing install by adding or
+#           removing features.
+#
+# The offering ID attribute is required because it specifies the
+# offering to be installed. The offering listed must be present in
+# at least one of the repositories listed earlier. The example
+# command below contains the offering ID for the Network Deployment
+# edition of WebSphere Application Server.
+#
+# The version attribute is optional. If a version number is provided,
+# then the offering will be installed at the version level specified
+# as long as it is available in the repositories. If the version
+# attribute is not provided, then the default behavior is to install
+# the latest version available in the repositories. The version number
+# can be found in the repository.xml file in the repositories.
+# For example, <offering ... version='8.5.0.20120217_2222'>.
+#
+# The profile attribute is required and typically is unique to the
+# offering. If modifying or updating an existing installation, the
+# profile attribute must match the profile ID of the targeted installation
+# of WebSphere Application Server.
+#
+# The features attribute is optional. Offerings always have at least
+# one feature; a required core feature which is installed regardless
+# of whether it is explicitly specified. If other feature names
+# are provided, then only those features will be installed.
+# Features must be comma delimited without spaces.
+#
+# The feature values for WebSphere Application Server include:
+#  core.feature,ejbdeploy,thinclient,embeddablecontainer,samples,
+#  liberty,com.ibm.sdk.6_32bit,com.ibm.sdk.6_64bit
+#
+# The sdk 32 / 64 bit feature does not apply to Zos/iSeries
+#
+# The features ejbdeploy, thinclient, embeddablecontainer, and samples
+# are subfeatures of core.feature.
+#
+# You must install core.feature (full WebSphere Application Server
+# profile), liberty (Liberty profile), or both.
+#
+# You cannot use the Installation Manager modify, update, or rollback functions
+# to modify this installation later and add or remove core.feature (full WebSphere
+# Application Server profile) or liberty (Liberty profile) or the Software Development Kit (SDK).
+# You can use these functions to add or remove the ejbdeploy, thinclient,
+# embeddablecontainer, or samples subfeatures of core.feature later.
+#
+# On 32-bit machines, the 32-bit sdk feature will be installed
+# automatically even if it is not specified in the response file.
+#
+# On 64-bit machines, one and only one of the Software Development
+# Kit features (SDK) must be specified.
+#
+# The installFixes attribute indicates whether fixes available in
+# repositories are installed with the product. By default, all
+# available fixes will be installed with the offering.
+#
+# Valid values for installFixes:
+#      none = do not install available fixes with the offering.
+#      recommended = installs all available recommended fixes with the offering.
+#      all = installs all available fixes with the offering.
+#
+# Interim fixes for offerings also can be installed while they
+# are being installed by including the offering ID for the interim
+# fix and specifying the profile ID. A commented out example is
+# provided in the install command below.
+#
+# Installation Manager supports installing multiple offerings at once.
+# Additional offerings can be included in the install command,
+# with each offering requiring its own offering ID, version, profile value,
+# and feature values.
+#
+# Profile Command
+#
+# A separate profile command must be included for each offering listed
+# in the install command. The profile command informs Installation
+# Manager about offering specific properties or configuration values.
+#
+# The installLocation specifies where the offering will be installed.
+# If the response file is used to modify or update an existing
+# installation, then ensure the installLocation points to the
+# location where the offering was installed previously.
+#
+# The eclipseLocation data key should use the same directory path to
+# WebSphere Application Server as the installationLocation attribute.
+#
+# Include data keys for product specific profile properties.
+# For instance, additional translations can be specified by including
+# the cic.selector.nl data key and the language codes as values for
+# the translations to install.
+#
+#  Language code values: cs,de,en,es,fr,hu,it,ja,ko,pl,pt_BR,ro,ru,zh,zh_HK,zh_TW
+#
+####################################################################### -->
+
+<install modify='false'>
+  <offering id='com.ibm.websphere.ND.v85'
+  profile='WebSphere Application Server V8.5'
+  features=''
+  installFixes='none'/>
+  <!-- <offering id='PM12345_WAS80' profile='IBM WebSphere Application Server V8.5'/> -->
+</install>
+
+<profile id='IBM WebSphere Application Server V8.5' installLocation='/opt/IBM/WAS'>
+  <data key='eclipseLocation' value='/opt/IBM/InstallationManager/eclipse'/>
+  <data key='user.import.profile' value='false'/>
+  <data key='cic.selector.nl' value='en'/>
+</profile>
+
+<!-- ##### Shared Data Location ###########################################
+# Uncomment the preference for eclipseCache to set the shared data
+# location the first time you use Installation Manager to do an
+# installation.
+#
+# Eclipse cache location can be obtained from the installed.xml file found in
+# Linux/Unix: /var/ibm/InstallationManager
+# Windows: C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager
+# from the following property:
+# <property name='cacheLocation' value='C:\Program Files\IBM\IMShared'/>
+#
+# Open the installed.xml file in a text editor because the style sheet
+# might hide this value if opened in a web browser.
+# For further information on how to edit preferences, refer to the public library at:
+# http://publib.boulder.ibm.com/infocenter/install/v1r5/index.jsp?topic=/com.ibm.silentinstall12.doc/topics/r_silent_prefs.html
+#
+# After the shared data location is set, it cannot be changed
+# using a response file or the graphical wizard.
+#
+# Ensure that the shared data location is a location that can be written
+# to by all user accounts that are expected to use Installation Manager.
+#
+# By default, Installation Manager saves downloaded artifacts to
+# the shared data location. This serves two purposes.
+#
+# First, if the same product is installed a more than once to the machine,
+# then the files in the shared data location will be used rather than
+# downloading them again.
+#
+# Second, during the rollback process, the saved artifacts are used.
+# Otherwise, if the artifacts are not saved or are removed, then
+# Installation Manager must have to access the repositories used to
+# install the previous versions.
+#
+# Valid values for preserveDownloadedArtifacts:
+#     true = store downloaded artifacts in the shared data location
+#     false = remove downloaded artifacts from the shared data location
+#
+####################################################################### -->
+
+<!--
+<preference name='com.ibm.cic.common.core.preferences.eclipseCache' value='C:\Program Files\IBM\IMShared'/>
+<preference name='com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts' value='true'/>
+-->
+
+
+<!-- ##### Preferences Settings ###########################################
+# Additional preferences for Installation Manager can be specified.
+# These preference correspond to those that are located in the graphical
+# interface under File / Preferences.
+#
+# If a preference command is omitted from or commented out of the response
+# file, then Installation Manager uses the preference value that was
+# previously set or the default value for the preference.
+#
+# Preference settings might be added or deprecated in new versions of
+# Installation Manager. Consult the online Installation Manager
+# Information Center for the latest set of preferences and
+# descriptions about how to use them.
+#
+# http://publib.boulder.ibm.com/infocenter/install/v1r5/index.jsp
+#
+####################################################################### -->
+
+<!--
+<preference name='com.ibm.cic.common.core.preferences.connectTimeout' value='30'/>
+<preference name='com.ibm.cic.common.core.preferences.readTimeout' value='45'/>
+<preference name='com.ibm.cic.common.core.preferences.downloadAutoRetryCount' value='0'/>
+<preference name='offering.service.repositories.areUsed' value='true'/>
+<preference name='com.ibm.cic.common.core.preferences.ssl.nonsecureMode' value='false'/>
+<preference name='com.ibm.cic.common.core.preferences.http.disablePreemptiveAuthentication' value='false'/>
+<preference name='http.ntlm.auth.kind' value='NTLM'/>
+<preference name='http.ntlm.auth.enableIntegrated.win32' value='true'/>
+<preference name='com.ibm.cic.common.core.preferences.keepFetchedFiles' value='false'/>
+<preference name='PassportAdvantageIsEnabled' value='false'/>
+<preference name='com.ibm.cic.common.core.preferences.searchForUpdates' value='false'/>
+<preference name='com.ibm.cic.agent.ui.displayInternalVersion' value='false'/>
+ -->
+
+</agent-input>
