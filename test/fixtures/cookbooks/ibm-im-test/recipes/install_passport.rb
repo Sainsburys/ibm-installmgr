@@ -9,7 +9,7 @@ ibm_secure_storage_file '/root/MySecureStorageFile' do
   password node['ibm-im-test']['passport_advantage']['password']
 end
 
-ibm_package 'IHS install' do
+ibm_package 'IM Packaging Utility install' do
   packages ['com.ibm.cic.packagingUtility']
   install_dir '/opt/IBM/PackagingUtility'
   passport_advantage true

@@ -70,8 +70,6 @@ suites:
 
  We are currently working on smoothing out this process.
 
- There is currently no ChefSpec tests due to the dependency on installation media for IBM packages.
-
 ```
 bundle exec kitchen test
 ```
