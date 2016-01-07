@@ -23,32 +23,45 @@ module InstallMgrCookbook
     resource_name :ibm_secure_storage_file
     property :secure_file, String, name_property: true
     property :master_pw_file, String, default: nil
+    property :master_pw, String, default: nil
     property :url, String, default: 'http://www.ibm.com/software/repositorymanager/entitled/repository.xml'
-    property :passportAdvantage, [TrueClass, FalseClass], default: false
+    property :imutilsc_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
+    property :passport_advantage, [TrueClass, FalseClass], default: false
     property :username, String, default: nil
     property :password, String, default: nil
 
     action :create do
-      # if passportAdvantage ignore url.
-      config_dir = ::File.dirname(secure_file)
+      # create required dirs
+      # %w(secure_file master_pw_file).each do |f|
+      #   dir = ::File.dirname(f)
+      #
+      #   directory dir do
+      #     mode '0600'
+      #     recursive true
+      #     action :create
+      #     not_if { dir == '/root' || dir == '/home' }
+      #   end
+      # end
 
-      directory config_dir do
-        mode '0640'
-        recursive true
-        action :create
+      file master_pw_file do
+        content master_pw
+        mode '0600'
+        sensitive true
       end
 
-      if passportAdvantage
-        command = "./imutilsc saveCredential  -passportAdvantage -userName \"#{username}\" -userPassword "\
+      # if passportAdvantage ignore url.
+      if passport_advantage
+        cmd = "./imutilsc saveCredential  -passportAdvantage -userName \"#{username}\" -userPassword "\
         "\"#{password}\" -secureStorageFile \"#{secure_file}\" -masterPasswordFile \"#{master_pw_file}\""
       else
-        command = "./imutilsc saveCredential  -url \"#{url}\" -userName \"#{username}\" -userPassword "\
+        cmd = "./imutilsc saveCredential  -url \"#{url}\" -userName \"#{username}\" -userPassword "\
         "\"#{password}\" -secureStorageFile \"#{secure_file}\" -masterPasswordFile \"#{master_pw_file}\""
       end
 
-      execute "imcl command #{cmd} #{options}" do
-        cwd imcl_dir
-        command command
+      execute 'imutilsc command' do
+        cwd imutilsc_dir
+        command cmd
+        sensitive true
         action :run
       end
     end

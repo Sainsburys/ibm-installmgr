@@ -24,16 +24,18 @@ module InstallMgrCookbook
     property :packages, [String, Array], required: true, default: nil # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
     property :install_dir, String, required: true, default: nil
     property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
-    property :repositories, [String, Array], required: true, default: nil
+    property :repositories, [String, Array], default: nil
+    property :passport_advantage, [TrueClass, FalseClass], default: false
     property :service_user, String, default: 'ibm'
     property :service_group, String, default: 'ibm'
     property :additional_options, String, default: ''
     property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
     property :log_dir, String, default: '/var/ibm/InstallationManager/logs'
+    property :secure_storage_file, String, default: nil
+    property :master_pw_file, String, default: nil
+
     # TODO: Include the below properties at some stage
     # property :install_fixes, String, default: 'none', :regex => /^(none|recommended|all)$/
-    # property :secure_storage_file, String, default: nil
-    # property :master_password_file, String, default: nil
     # property :preferences, [Hash], default: nil
     # property :properties, [Hash], default: nil
 
@@ -73,12 +75,17 @@ module InstallMgrCookbook
       date = Time.now.strftime('%d%b%Y-%H%M')
       logfile = "#{packages[0]}-install-#{date}.log"
 
-      packages_str = packages.join(' ')
-      repositories_str = repositories.join(', ')
+      packages_str = packages.join(' ') if packages
+      repositories_str = repositories.join(', ') if repositories
 
-      imcl_wrapper(imcl_dir, "./imcl install '#{packages_str}' -showProgress", "-repositories '#{repositories_str}' "\
-      "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
-      "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}")
+      options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
+      "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
+
+      options << " -repositories '#{repositories_str}' " if repositories
+      options << ' -connectPassportAdvantage' if passport_advantage
+      options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
+
+      imcl_wrapper(imcl_dir, "./imcl install '#{packages_str}' -showProgress", options)
     end
 
     # need to wrap helper methods in class_eval

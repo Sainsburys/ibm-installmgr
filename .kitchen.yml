@@ -6,17 +6,19 @@ driver:
 
 provisioner:
   name: chef_zero
+  attributes:
+    ibm-im-test:
+      passport_advantage:
+        user: <%= ENV['PASSPORTADV_USER'] %>
+        password: <%= ENV['PASSPORTADV_PW'] %>
 
 platforms:
   - name: centos-6.7
 
 suites:
-  - name: im_install
+  - name: install_im
     run_list:
     - recipe[ibm-im-test::install_im]
-  - name: was_install
+  - name: install_passport
     run_list:
-    - recipe[ibm-im-test::install_was]
-  - name: was_install_response
-    run_list:
-    - recipe[ibm-im-test::install_was_response]
+    - recipe[ibm-im-test::install_passport]

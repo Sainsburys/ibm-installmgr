@@ -9,10 +9,9 @@ Group install mode has not been tested. Only admin and nonAdmin have.
 
 ## Requirements
 * Chef 12.5 or higher
-* Java needs to be pre-installed. The libraries do not install Java intentionally so it can me managed separately.
+* Java needs to be pre-installed. The libraries do not install Java intentionally so it can me managed separately in your wrapper.
 * Installation Media for Installation manager and any other packages.
 This can be sourced from an online repository like IBM PassportAdvantage, or from your own download link.  Supports tar, tar.gz and zip.
-* Java must be installed.  This cookbook purposefully omits the java install.
 * Installation Kits may need to be packaged into a single folder.  For example the Websphere installation kit comes in 3 folders disk1, disk2 and disk3.  Make sure all disks are in the same folder like so:
 
   - WAS/
@@ -47,6 +46,24 @@ install_mgr 'ibm-im install' do
   service_user 'ibm-im'
   service_group 'ibm-im'
 end
+
+ibm_secure_storage_file '/root/MySecureStorageFile' do
+  master_pw_file '/root/MyMasterPassFile'
+  master_pw 'mypassphrase'
+  passport_advantage true
+  username 'myPassportAdvUser'
+  password 'mypassword'
+end
+
+ibm_package 'IHS install' do
+  packages ['com.ibm.websphere.IHS.v85_8.5.5000.20130514_1044']
+  install_dir '/opt/IBM/WAS'
+  passport_advantage true
+  imcl_dir '/opt/IBM/InstallationManager/eclipse/tools'
+  master_pw_file '/root/MyMasterPassFile'
+  action :install
+end
+
 ```
 
 ##### Install Websphere with Installation Manager
@@ -128,6 +145,9 @@ end
 - `additional_options`, a string of additional options to append if needed. String, default: ''
 - `access_rights`, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
 - `log_dir`, String, default: '/var/ibm/InstallationManager/logs'
+- `:passport_advantage`, When set to true adds passportAdvantafe repo url to repositories. default: false
+- `:secure_storage_file`, path to secure storage file to use for repo credentials. String, default: nil
+- `:master_pw_file`, path to file containing password to access encrypted secure_storage_file. String, default: nil
 
 ##### Actions
 
@@ -193,28 +213,29 @@ end
 
 ### ibm_secure_storage_file
 
-THIS RESOURCE IS STILL A WORK IN PROGRESS.
 Creates an encrypted Eclipse Storage file to store password credentials to repositories such as IBM passport Advantage.
 
 ##### Example
 ```ruby
 ibm_secure_storage_file '/root/MySecureStorageFile' do
   master_pw_file '/root/MyMasterPassFile'
-  passportAdvantage true
-  username 'jim'
-  password 'somepassword'
+  master_pw 'mypassphrase'
+  passport_advantage true
+  username 'myemail@somedomain.com'
+  password 'mypass'
 end
 ```
 
 ##### Parameters
 
 - `secure_file`, String, name_property: true
-- `master_pw_file`, Contains the secret to access the repo. String
+- `master_pw_file`, Contains the password to access the secure_file. String
+- `master_pw`, password to put in master_pw_file. String, default: nil
 - `url`, String, default: 'http://www.ibm.com/software/repositorymanager/entitled/repository.xml'
-- `passportAdvantage`, Set to true for passportAdvantage credentials. The url will be ignored if set. [TrueClass, FalseClass], default: false
+- `passport_advantage`, Set to true when credentials are to access passportAdvantage. The url will be ignored if set. [TrueClass, FalseClass], default: false
 - `username`, String, default: nil
 - `password`, For encrypting the secure file. String, default: nil
-
+- `imutilsc_dir`, Path to imutilsc binary. You shouldn't need to change this from the default. String, default: '/opt/IBM/InstallationManager/eclipse/tools'
 ##### Actions
 
 - `:create`
