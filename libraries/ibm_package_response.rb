@@ -1,7 +1,7 @@
 
 #
-# Cookbook Name:: websphere
-# Resource:: websphere-server
+# Cookbook Name:: ibm-installmgr
+# Resource:: ibm_package_response
 #
 # Copyright (C) 2015 J Sainsburys
 #
@@ -22,7 +22,7 @@ module InstallMgrCookbook
   class IbmPackageResponse < Chef::Resource
     resource_name :ibm_package_response
     property :response_file, String, name_property: true, required: true
-    property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
+    property :imcl_dir, String, default: '/opt/ibm/InstallationManager/eclipse/tools'
     property :log_dir, String, default: '/var/ibm/InstallationManager/logs'
     property :pkg_group, String, default: 'ibm'
     property :pkg_owner, String, default: 'ibm'

@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: websphere
-# Resource:: websphere-server
+# Cookbook Name:: ibm-installmgr
+# Resource:: install_mgr
 #
 # Copyright (C) 2015 J Sainsburys
 #
@@ -29,7 +29,7 @@ module InstallMgrCookbook
     property :install_dir, String, default: lazy { "#{ibm_root_dir}/InstallationManager/eclipse" }
     property :package_name, String, default: 'com.ibm.cic.agent'
     property :repositories, [String, Array], default: lazy { [extract_dir] }
-    property :ibm_root_dir, String, default: '/opt/IBM'
+    property :ibm_root_dir, String, default: '/opt/ibm'
     property :data_location, String, default: '/var/ibm/InstallationManager'
     property :service_user, String, default: 'ibm-im'
     property :service_group, String, default: 'ibm-im'
@@ -61,19 +61,6 @@ module InstallMgrCookbook
         not_if { service_group == 'root' }
       end
 
-      if url?(install_package)
-        local_file = local_installer_file
-
-        remote_file local_file do
-          source install_package
-          owner service_user
-          group service_group
-          mode '0750'
-          checksum install_package_sha256
-          action :create
-        end
-      end
-
       # create required dirs
       dirs = %w(ibm_root_dir extract_dir install_dir data_location)
       dirs.each do |dir|
@@ -86,25 +73,44 @@ module InstallMgrCookbook
         end
       end
 
-      local_file = local_installer_file
-      ext = ::File.extname(local_file)
+      if install_package
+        if url?(install_package)
+          local_file = local_installer_file
 
-      case ext
-      when '.gz'
-        extract_tar(local_file, extract_dir)
-      when '.tar'
-        extract_tar(local_file, extract_dir)
-      when '.zip'
-        extract_zip(local_file, extract_dir)
-      else
-        Chef::Log.error('Unable to extract ibm Installation Manager Install package. It must be either tar, tar.gz or zip')
+          remote_file local_file do
+            source install_package
+            owner service_user
+            group service_group
+            mode '0750'
+            checksum install_package_sha256
+            action :create
+          end
+        end
+
+        local_file = local_installer_file
+        ext = ::File.extname(local_file)
+
+        case ext
+        when '.gz'
+          extract_tar(local_file, extract_dir)
+        when '.tar'
+          extract_tar(local_file, extract_dir)
+        when '.zip'
+          extract_zip(local_file, extract_dir)
+        else
+          Chef::Log.error('Unable to extract ibm Installation Manager Install package. It must be either tar, tar.gz or zip')
+        end
+
       end
 
-      repositories_str = repositories.join(', ')
+      repositories_str = repositories.join(', ') if repositories
 
-      cmd = "./imcl install \"#{package_name}\" -repositories \"#{repositories_str}\" "\
+      cmd = "./imcl install \"#{package_name}\" "\
       "-installationDirectory \"#{install_dir}\" -accessRights \"#{access_rights}\" "\
       "-acceptLicense -dataLocation \"#{data_location}\" -preferences #{preferences}"
+      cmd << " -repositories '#{repositories_str}' " if repositories
+      # cmd << ' -connectPassportAdvantage' if passport_advantage
+      # cmd << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
 
       execute 'install im with imcl' do
         cwd "#{extract_dir}/tools"

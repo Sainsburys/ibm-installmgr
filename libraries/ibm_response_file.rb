@@ -1,7 +1,7 @@
 
 #
-# Cookbook Name:: websphere
-# Resource:: websphere-server
+# Cookbook Name:: ibm-installmgr
+# Resource:: ibm_response_file
 #
 # Copyright (C) 2015 J Sainsburys
 #
