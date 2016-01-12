@@ -11,9 +11,9 @@ end
 
 ibm_package 'IM Packaging Utility install' do
   packages ['com.ibm.cic.packagingUtility']
-  install_dir '/opt/IBM/PackagingUtility'
+  install_dir '/opt/ibm/PackagingUtility'
   passport_advantage true
-  imcl_dir '/opt/IBM/InstallationManager/eclipse/tools'
+  imcl_dir '/opt/ibm/InstallationManager/eclipse/tools'
   master_pw_file '/root/MyMasterPassFile'
   secure_storage_file '/root/MySecureStorageFile'
   action :install

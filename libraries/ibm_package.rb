@@ -1,7 +1,7 @@
 
 #
-# Cookbook Name:: websphere
-# Resource:: websphere-server
+# Cookbook Name:: ibm-installmgr
+# Resource:: ibm_package
 #
 # Copyright (C) 2015 J Sainsburys
 #
@@ -23,7 +23,7 @@ module InstallMgrCookbook
     resource_name :ibm_package
     property :packages, [String, Array], required: true, default: nil # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
     property :install_dir, String, required: true, default: nil
-    property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
+    property :imcl_dir, String, default: '/opt/ibm/InstallationManager/eclipse/tools'
     property :repositories, [String, Array], default: nil
     property :passport_advantage, [TrueClass, FalseClass], default: false
     property :service_user, String, default: 'ibm'

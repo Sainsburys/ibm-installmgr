@@ -1,7 +1,7 @@
 
 #
-# Cookbook Name:: websphere
-# Resource:: websphere-server
+# Cookbook Name:: ibm-installmgr
+# Resource:: ibm_secure_storage_file
 #
 # Copyright (C) 2015 J Sainsburys
 #
@@ -25,24 +25,12 @@ module InstallMgrCookbook
     property :master_pw_file, String, default: nil
     property :master_pw, String, default: nil
     property :url, String, default: 'http://www.ibm.com/software/repositorymanager/entitled/repository.xml'
-    property :imutilsc_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
+    property :imutilsc_dir, String, default: '/opt/ibm/InstallationManager/eclipse/tools'
     property :passport_advantage, [TrueClass, FalseClass], default: false
     property :username, String, default: nil
     property :password, String, default: nil
 
     action :create do
-      # create required dirs
-      # %w(secure_file master_pw_file).each do |f|
-      #   dir = ::File.dirname(f)
-      #
-      #   directory dir do
-      #     mode '0600'
-      #     recursive true
-      #     action :create
-      #     not_if { dir == '/root' || dir == '/home' }
-      #   end
-      # end
-
       file master_pw_file do
         content master_pw
         mode '0600'
