@@ -37,7 +37,6 @@ module InstallMgrCookbook
     property :secure_storage_file, String, default: nil
     property :master_pw_file, String, default: nil
 
-
     # TODO: Include the below properties at some stage
     # property :install_fixes, String, default: 'none', :regex => /^(none|recommended|all)$/
     # property :preferences, [Hash], default: nil
@@ -81,8 +80,8 @@ module InstallMgrCookbook
 
       packages_str = packages.join(' ') if packages
       repositories_str = repositories.join(', ') if repositories
-      properties_str = properties.map{|k,v| "#{k}=#{v}"}.join(',') if properties
-      preferences_str = preferences.map{|k,v| "#{k}=#{v}"}.join(',') if preferences
+      properties_str = properties.map { |k, v| "#{k}=#{v}" }.join(',') if properties
+      preferences_str = preferences.map { |k, v| "#{k}=#{v}" }.join(',') if preferences
 
       options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
       "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
