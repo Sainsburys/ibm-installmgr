@@ -28,11 +28,15 @@ module InstallMgrCookbook
     property :passport_advantage, [TrueClass, FalseClass], default: false
     property :service_user, String, default: 'ibm'
     property :service_group, String, default: 'ibm'
+    property :properties, [Hash], default: nil
+    property :preferences, [Hash], default: nil
+    property :install_fixes, String, default: 'none', regex: /^(none|recommended|all)$/
     property :additional_options, String, default: ''
     property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
     property :log_dir, String, default: '/var/ibm/InstallationManager/logs'
     property :secure_storage_file, String, default: nil
     property :master_pw_file, String, default: nil
+
 
     # TODO: Include the below properties at some stage
     # property :install_fixes, String, default: 'none', :regex => /^(none|recommended|all)$/
@@ -77,13 +81,18 @@ module InstallMgrCookbook
 
       packages_str = packages.join(' ') if packages
       repositories_str = repositories.join(', ') if repositories
+      properties_str = properties.map{|k,v| "#{k}=#{v}"}.join(',') if properties
+      preferences_str = preferences.map{|k,v| "#{k}=#{v}"}.join(',') if preferences
 
       options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
       "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
 
       options << " -repositories '#{repositories_str}' " if repositories
+      options << " -installFixes #{install_fixes}"
       options << ' -connectPassportAdvantage' if passport_advantage
       options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
+      options << " -properties #{properties_str}" if properties
+      options << " -preferences #{preferences_str}" if preferences
 
       imcl_wrapper(imcl_dir, "./imcl install '#{packages_str}' -showProgress", options)
     end
@@ -97,6 +106,7 @@ module InstallMgrCookbook
         execute 'imcl install command' do
           cwd imcl_dir
           command command
+          sensitive true
           action :run
         end
       end
