@@ -59,7 +59,7 @@ describe 'ibm-im-test::install_im' do
     end
 
     it 'executes imcl install' do
-      expect(centos_67_install_im).to run_execute('install im with imcl')
+      expect(centos_67_install_im).to run_execute('install im com.ibm.cic.agent')
     end
   end
 end

@@ -40,7 +40,7 @@ module InstallMgrCookbook
         action :create
       end
 
-      template 'response_file :create' do
+      template "response_file :create #{response_file}" do
         path response_file
         owner owner
         group group

@@ -20,8 +20,11 @@
 
 module InstallMgrCookbook
   class IbmPackage < Chef::Resource
+    require_relative 'helpers'
+    include InstallMgrHelpers
+
     resource_name :ibm_package
-    property :packages, [String, Array], required: true, default: nil # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
+    property :package, String, required: true, default: nil # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
     property :install_dir, String, required: true, default: nil
     property :imcl_dir, String, default: '/opt/ibm/InstallationManager/eclipse/tools'
     property :repositories, [String, Array], default: nil
@@ -45,55 +48,59 @@ module InstallMgrCookbook
     provides :ibm_package if defined?(provides)
 
     action :install do
-      user service_user do
-        comment 'ibm installation mgr service account'
-        home "/home/#{service_user}"
-        shell '/bin/bash'
-        not_if { service_user == 'root' }
+      unless package_installed?(package, imcl_dir)
+
+        user service_user do
+          comment 'ibm installation mgr service account'
+          home "/home/#{service_user}"
+          shell '/bin/bash'
+          not_if { service_user == 'root' }
+        end
+
+        directory "/home/#{service_user}" do
+          owner service_user
+          group service_user
+          mode '0750'
+          recursive true
+          action :create
+          not_if { service_user == 'root' }
+        end
+
+        group service_group do
+          members service_user
+          append true
+          not_if { service_group == 'root' }
+        end
+
+        directory log_dir do
+          owner service_user
+          group service_group
+          mode '0755'
+          recursive true
+          action :create
+        end
+
+        date = Time.now.strftime('%d%b%Y-%H%M')
+        logfile = "#{package}-install-#{date}.log"
+
+        # packages_str = packages.join(' ') if packages
+        repositories_str = repositories.join(', ') if repositories
+        properties_str = properties.map { |k, v| "#{k}=#{v}" }.join(',') if properties
+        preferences_str = preferences.map { |k, v| "#{k}=#{v}" }.join(',') if preferences
+
+        options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
+        "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
+
+        options << " -repositories '#{repositories_str}' " if repositories
+        options << " -installFixes #{install_fixes}"
+        options << ' -connectPassportAdvantage' if passport_advantage
+        options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
+        options << " -properties #{properties_str}" if properties
+        options << " -preferences #{preferences_str}" if preferences
+
+        imcl_wrapper(imcl_dir, "./imcl install '#{package}' -showProgress", options)
+
       end
-
-      directory "/home/#{service_user}" do
-        owner service_user
-        group service_user
-        mode '0750'
-        recursive true
-        action :create
-        not_if { service_user == 'root' }
-      end
-
-      group service_group do
-        members service_user
-        append true
-        not_if { service_group == 'root' }
-      end
-
-      directory log_dir do
-        owner service_user
-        group service_group
-        mode '0755'
-        recursive true
-        action :create
-      end
-
-      date = Time.now.strftime('%d%b%Y-%H%M')
-      logfile = "#{packages[0]}-install-#{date}.log"
-
-      packages_str = packages.join(' ') if packages
-      repositories_str = repositories.join(', ') if repositories
-      properties_str = properties.map { |k, v| "#{k}=#{v}" }.join(',') if properties
-      preferences_str = preferences.map { |k, v| "#{k}=#{v}" }.join(',') if preferences
-
-      options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
-      "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
-
-      options << " -repositories '#{repositories_str}' " if repositories
-      options << " -installFixes #{install_fixes}"
-      options << ' -connectPassportAdvantage' if passport_advantage
-      options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
-      options << " -properties #{properties_str}" if properties
-      options << " -preferences #{preferences_str}" if preferences
-
-      imcl_wrapper(imcl_dir, "./imcl install '#{packages_str}' -showProgress", options)
     end
 
     # need to wrap helper methods in class_eval
@@ -102,7 +109,7 @@ module InstallMgrCookbook
       def imcl_wrapper(_imcl_directory, cmd, options)
         command = "#{cmd} #{options}"
 
-        execute 'imcl install command' do
+        execute "imcl install #{package}" do
           cwd imcl_dir
           command command
           sensitive true

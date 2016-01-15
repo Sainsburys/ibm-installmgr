@@ -10,7 +10,7 @@ ibm_secure_storage_file '/root/MySecureStorageFile' do
 end
 
 ibm_package 'IM Packaging Utility install' do
-  packages ['com.ibm.cic.packagingUtility']
+  package 'com.ibm.cic.packagingUtility'
   install_dir '/opt/ibm/PackagingUtility'
   passport_advantage true
   imcl_dir '/opt/ibm/InstallationManager/eclipse/tools'

@@ -20,8 +20,12 @@
 
 module InstallMgrCookbook
   class IbmPackageResponse < Chef::Resource
+    require_relative 'helpers'
+    include InstallMgrHelpers
+
     resource_name :ibm_package_response
-    property :response_file, String, name_property: true, required: true
+    property :package, String, name_property: true
+    property :response_file, String, required: true, default: nil
     property :imcl_dir, String, default: '/opt/ibm/InstallationManager/eclipse/tools'
     property :log_dir, String, default: '/var/ibm/InstallationManager/logs'
     property :pkg_group, String, default: 'ibm'
@@ -31,18 +35,23 @@ module InstallMgrCookbook
     provides :ibm_package_response if defined?(provides)
 
     action :install do
-      directory log_dir do
-        owner pkg_owner
-        group pkg_group
-        mode '0755'
-        recursive true
-        action :create
-      end
+      temp = package_installed?(package, imcl_dir)
+      Chef::Log.warn("blah package_installed #{temp}")
 
-      date = Time.now.strftime('%d%b%Y-%H%M')
-      filename = ::File.basename(response_file, '.xml')
-      logfile = "#{filename}-#{date}.log"
-      imcl_wrapper(imcl_dir, "./imcl -accessRights \"#{access_rights}\" input \"#{response_file}\"", "-log \"#{log_dir}/#{logfile}\" -acceptLicense")
+      unless package_installed?(package, imcl_dir)
+        directory log_dir do
+          owner pkg_owner
+          group pkg_group
+          mode '0755'
+          recursive true
+          action :create
+        end
+
+        date = Time.now.strftime('%d%b%Y-%H%M')
+        filename = ::File.basename(response_file, '.xml')
+        logfile = "#{filename}-#{date}.log"
+        imcl_wrapper(imcl_dir, "./imcl -accessRights \"#{access_rights}\" input \"#{response_file}\"", "-log \"#{log_dir}/#{logfile}\" -acceptLicense")
+      end
     end
 
     # need to wrap helper methods in class_eval
@@ -51,7 +60,7 @@ module InstallMgrCookbook
       def imcl_wrapper(_imcl_directory, cmd, options)
         command = "#{cmd} #{options}"
 
-        execute 'imcl input command' do
+        execute "imcl input #{response_file}" do
           cwd imcl_dir
           command command
           action :run

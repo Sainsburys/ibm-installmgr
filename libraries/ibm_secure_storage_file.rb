@@ -46,7 +46,7 @@ module InstallMgrCookbook
         "\"#{password}\" -secureStorageFile \"#{secure_file}\" -masterPasswordFile \"#{master_pw_file}\""
       end
 
-      execute 'imutilsc command' do
+      execute "imutilsc command #{secure_file}" do
         cwd imutilsc_dir
         command cmd
         sensitive true
