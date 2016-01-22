@@ -27,7 +27,7 @@ describe 'ibm-im-test::install_was_response' do
     end
 
     it 'executes imcl install' do
-      expect(centos_67_install_was).to run_execute('imcl input command')
+      expect(centos_67_install_was).to run_execute('imcl input /opt/ibm/response_files/my_was_response.xml')
     end
   end
 end

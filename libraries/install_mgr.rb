@@ -21,6 +21,9 @@
 
 module InstallMgrCookbook
   class InstallMgr < Chef::Resource
+    require_relative 'helpers'
+    include InstallMgrHelpers
+
     resource_name :install_mgr
     property :install_package, String, required: true, default: nil # can be url or local path to a compressed file
     property :install_package_sha256, String, default: nil
@@ -39,83 +42,85 @@ module InstallMgrCookbook
     provides :install_mgr if defined?(provides)
 
     action :install do
-      user service_user do
-        comment 'ibm installation mgr service account'
-        home "/home/#{service_user}"
-        shell '/bin/bash'
-        not_if { service_user == 'root' }
-      end
+      unless package_installed?(package_name, "#{install_dir}/tools")
 
-      directory "/home/#{service_user}" do
-        owner service_user
-        group service_user
-        mode '0750'
-        recursive true
-        action :create
-        not_if { service_user == 'root' }
-      end
+        user service_user do
+          comment 'ibm installation mgr service account'
+          home "/home/#{service_user}"
+          shell '/bin/bash'
+          not_if { service_user == 'root' }
+        end
 
-      group service_group do
-        members service_user
-        append true
-        not_if { service_group == 'root' }
-      end
-
-      # create required dirs
-      dirs = %w(ibm_root_dir extract_dir install_dir data_location)
-      dirs.each do |dir|
-        directory dir do
+        directory "/home/#{service_user}" do
           owner service_user
-          group service_group
+          group service_user
           mode '0750'
           recursive true
           action :create
+          not_if { service_user == 'root' }
         end
-      end
 
-      if install_package
-        if url?(install_package)
-          local_file = local_installer_file
+        group service_group do
+          members service_user
+          append true
+          not_if { service_group == 'root' }
+        end
 
-          remote_file local_file do
-            source install_package
+        # create required dirs
+        dirs = %w(ibm_root_dir extract_dir install_dir data_location)
+        dirs.each do |dir|
+          directory dir do
             owner service_user
             group service_group
             mode '0750'
-            checksum install_package_sha256
+            recursive true
             action :create
           end
         end
 
-        local_file = local_installer_file
-        ext = ::File.extname(local_file)
+        if install_package
+          if url?(install_package)
+            local_file = local_installer_file
 
-        case ext
-        when '.gz'
-          extract_tar(local_file, extract_dir)
-        when '.tar'
-          extract_tar(local_file, extract_dir)
-        when '.zip'
-          extract_zip(local_file, extract_dir)
-        else
-          Chef::Log.error('Unable to extract ibm Installation Manager Install package. It must be either tar, tar.gz or zip')
+            remote_file local_file do
+              source install_package
+              owner service_user
+              group service_group
+              mode '0750'
+              checksum install_package_sha256
+              action :create
+            end
+          end
+
+          local_file = local_installer_file
+          ext = ::File.extname(local_file)
+
+          case ext
+          when '.gz'
+            extract_tar(local_file, extract_dir)
+          when '.tar'
+            extract_tar(local_file, extract_dir)
+          when '.zip'
+            extract_zip(local_file, extract_dir)
+          else
+            Chef::Log.error('Unable to extract ibm Installation Manager Install package. It must be either tar, tar.gz or zip')
+          end
+
         end
 
-      end
+        repositories_str = repositories.join(', ') if repositories
 
-      repositories_str = repositories.join(', ') if repositories
+        cmd = "./imcl install \"#{package_name}\" "\
+        "-installationDirectory \"#{install_dir}\" -accessRights \"#{access_rights}\" "\
+        "-acceptLicense -dataLocation \"#{data_location}\" -preferences #{preferences}"
+        cmd << " -repositories '#{repositories_str}' " if repositories
 
-      cmd = "./imcl install \"#{package_name}\" "\
-      "-installationDirectory \"#{install_dir}\" -accessRights \"#{access_rights}\" "\
-      "-acceptLicense -dataLocation \"#{data_location}\" -preferences #{preferences}"
-      cmd << " -repositories '#{repositories_str}' " if repositories
-      # cmd << ' -connectPassportAdvantage' if passport_advantage
-      # cmd << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
+        execute "install im #{package_name}" do
+          cwd "#{extract_dir}/tools"
+          command cmd
+          action :run
+        end
 
-      execute 'install im with imcl' do
-        cwd "#{extract_dir}/tools"
-        command cmd
-        action :run
       end
     end
 

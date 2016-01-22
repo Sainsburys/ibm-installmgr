@@ -56,7 +56,7 @@ ibm_secure_storage_file '/root/MySecureStorageFile' do
 end
 
 ibm_package 'IHS install' do
-  packages ['com.ibm.websphere.IHS.v85_8.5.5000.20130514_1044']
+  package 'com.ibm.websphere.IHS.v85_8.5.5000.20130514_1044'
   install_dir '/opt/IBM/WAS'
   passport_advantage true
   imcl_dir '/opt/IBM/InstallationManager/eclipse/tools'
@@ -71,7 +71,7 @@ end
 ```ruby
 # installation manager must be installed before calling this resource
 ibm_package 'WAS ND install' do
-  packages ['com.ibm.websphere.ND.v85']
+  package 'com.ibm.websphere.ND.v85'
   install_dir '/opt/IBM/WAS'
   repositories ['/opt/ibm-media/WASND']
   imcl_dir '/opt/IBM/InstallationManager/eclipse/tools'
@@ -112,7 +112,8 @@ end
 - `:service_user`, String, default: 'ibm-im'
 - `:service_group`, String, default: 'ibm-im'
 - `:access_rights`, String, default: 'nonAdmin', Can only be nonAdmin, admin or group.  Group is not tested.
-- `:preferences`, An additional string to add preferences. String, default: 'offering.service.repositories.areUsed=false'
+- `:preferences`, A hash of preferences that are often contained within a response file. Hash, default: nil
+- `:properties`, A hash of properties that are often contained within a response file. Can be used in place of response file. [Hash], default: nil
 
 ##### Actions
 
@@ -125,18 +126,33 @@ Installs an IBM application using Installation Manager
 
 ##### Example
 ```ruby
-ibm_package 'WAS ND install' do
-  packages ['com.ibm.websphere.ND.v85']
-  install_dir '/opt/IBM/WAS'
-  repositories ['http://repo/WASNDv85.tar.gz']
-  imcl_dir '/opt/IBM/InstallationManager/eclipse/tools'
+# ... omitted ibm_secure_storage_file resource.
+
+ibm_package 'IHS install' do
+  package 'com.ibm.websphere.IHS.v85,core.feature,arch.64bit'
+  install_dir '/opt/ibm/HTTPServer'
+  properties ({
+    'eclipseLocation' => '/opt/ibm/HTTPServer',
+    'user.import.profile' => 'false',
+    'user.ihs.httpPort' => '9080',
+    'user.ihs.installHttpService' => 'true',
+    'user.ihs.allowNonRootSilentInstall' => 'true',
+    'cic.selector.nl' => 'en'
+  })
+  preferences ({
+    'com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts' => 'true'
+  })
+  repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.IHS.v85']
+  master_pw_file '/root/MyMasterPassFile'
+  secure_storage_file '/root/MySecureStorageFile'
   action :install
 end
+
 ```
 
 ##### Parameters
 
-- `:packages`, An array of application id's to install. Eg ['com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'] [String, Array] required: true, default: nil
+- `:package`, The package application id to install. Eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044', String required: true, default: nil
 - `install_dir`, Where to install the package. String, required: true, default: nil
 - `imcl_dir`, Path to the imcl utility binary You shouldn't need to change this. String, default: '/opt/IBM/InstallationManager/eclipse/tools'
 - `repositories`, Array of local dirs or urls to repositories.  Installation Kits may need to be packaged into a single folder, see the Requirements section above. [String, Array], required: true, default: nil
@@ -171,8 +187,8 @@ end
 ```
 
 ##### Parameters
-
-- `response_file`, Path to create the response file. String, name_property: true
+- `:package`, The package application id to install. Eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044', String required: true, default: nil,  name_property: true
+- `response_file`, Path to create the response file. String
 - `group`, File group. String, default: 'ibm-im'
 - `owner`, File owner. String, default: 'ibm-im'
 - `template_source`, String, default: nil
@@ -191,7 +207,8 @@ Please note you may need to create and required users and directories mentioned 
 
 ##### Example
 ```ruby
-ibm_package_response '/opt/IBM/response_files/my_was_response.xml' do
+ibm_package_response 'com.ibm.websphere.ND.v85' do
+  response_file '/opt/IBM/response_files/my_was_response.xml'
   action :install
 end
 
