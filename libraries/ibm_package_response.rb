@@ -36,7 +36,6 @@ module InstallMgrCookbook
 
     action :install do
       temp = package_installed?(package, imcl_dir)
-      Chef::Log.warn("blah package_installed #{temp}")
 
       unless package_installed?(package, imcl_dir)
         directory log_dir do
