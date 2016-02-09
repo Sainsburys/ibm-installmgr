@@ -5,7 +5,7 @@ describe 'ibm-im-test::install_passport' do
     ChefSpec::ServerRunner.new(
       step_into: %w(ibm_secure_storage_file ibm_package),
       platform: 'centos',
-      version: '6.7'
+      version: '6.6'
     ) do |node|
       node.set['ibm-im-test']['passport_advantage']['user'] = 'dummyuser'
       node.set['ibm-im-test']['passport_advantage']['password'] = 'dummypw'
