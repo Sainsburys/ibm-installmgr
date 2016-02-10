@@ -5,9 +5,8 @@ describe 'ibm-im-test::install_im' do
     ChefSpec::ServerRunner.new(
       step_into: 'install_mgr',
       platform: 'centos',
-      version: '6.7'
-    ) do |node|
-      # node.set['httpd']['version'] = '2.2'
+      version: '6.6'
+    )do
     end.converge('ibm-im-test::install_im')
   end
 

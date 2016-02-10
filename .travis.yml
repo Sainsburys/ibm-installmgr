@@ -1,0 +1,46 @@
+rvm: 2.2
+
+sudo: required
+
+addons:
+  apt:
+    sources:
+      - chef-stable-precise
+    packages:
+      - chefdk
+
+install: echo "skip bundle install"
+
+services: docker
+
+env:
+  matrix:
+  - INSTANCE=install-im-centos-6
+  # - INSTANCE=install-im-centos-7
+  # - INSTANCE=install-im-ubuntu-1204
+  # - INSTANCE=install-im-ubuntu-1404
+  # - INSTANCE=install-passport-centos-6
+  # - INSTANCE=install-passport-centos-7
+  # - INSTANCE=install-passport-ubuntu-1204
+  # - INSTANCE=install-passport-ubuntu-1404
+  fast_finish: true
+
+before_script:
+  - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+  - eval "$(/opt/chefdk/bin/chef shell-init bash)"
+  - /opt/chefdk/embedded/bin/chef gem install kitchen-dokken
+
+script:
+  - bundle install
+  - /opt/chefdk/embedded/bin/chef --version
+  - rubocop --version
+  - rubocop
+  - foodcritic --version
+  - foodcritic . --exclude spec
+  - bundle exec rspec
+  - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
+
+after_script:
+  - docker images
+  - docker ps -a
+  - cat .kitchen/logs/kitchen.log

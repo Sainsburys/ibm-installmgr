@@ -35,8 +35,6 @@ module InstallMgrCookbook
     provides :ibm_package_response if defined?(provides)
 
     action :install do
-      temp = package_installed?(package, imcl_dir)
-
       unless package_installed?(package, imcl_dir)
         directory log_dir do
           owner pkg_owner

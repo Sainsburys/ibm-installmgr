@@ -5,8 +5,8 @@ describe 'ibm-im-test::install_was_response' do
     ChefSpec::ServerRunner.new(
       step_into: 'ibm_package_response',
       platform: 'centos',
-      version: '6.7'
-    ) do |node|
+      version: '6.6'
+    ) do
     end.converge('ibm-im-test::install_was_response')
   end
 
