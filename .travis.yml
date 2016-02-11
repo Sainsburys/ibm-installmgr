@@ -19,7 +19,7 @@ env:
   # - INSTANCE=install-im-centos-7
   # - INSTANCE=install-im-ubuntu-1204
   # - INSTANCE=install-im-ubuntu-1404
-  # - INSTANCE=install-passport-centos-6
+  - INSTANCE=install-passport-centos-6
   # - INSTANCE=install-passport-centos-7
   # - INSTANCE=install-passport-ubuntu-1204
   # - INSTANCE=install-passport-ubuntu-1404
