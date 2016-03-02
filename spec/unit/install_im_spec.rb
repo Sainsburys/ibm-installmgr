@@ -6,7 +6,7 @@ describe 'ibm-im-test::install_im' do
       step_into: 'install_mgr',
       platform: 'centos',
       version: '6.6'
-    )do
+    ) do
     end.converge('ibm-im-test::install_im')
   end
 

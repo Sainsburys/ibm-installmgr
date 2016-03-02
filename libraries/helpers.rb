@@ -18,8 +18,9 @@
 
 module InstallMgrCookbook
   module InstallMgrHelpers
-    def package_installed?(package, imcl_dir)
-      main_pkg = package.split('_').first
+    def package_installed?(package, imcl_dir, fixpack = false)
+      main_pkg = package.split(',').first
+      main_pkg = main_pkg.split('_').first unless fixpack
       mycmd = Mixlib::ShellOut.new('./imcl listInstalledPackages', cwd: imcl_dir)
       mycmd.run_command
       mycmd.stdout.split(/\n/).map do |pkg|

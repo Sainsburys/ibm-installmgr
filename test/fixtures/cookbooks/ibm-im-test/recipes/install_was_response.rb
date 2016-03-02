@@ -7,7 +7,7 @@ ibm_response_file '/opt/ibm/response_files/my_was_response.xml' do
 end
 
 ibm_package_response 'com.ibm.websphere.ND.v85' do
-  response_file '/opt/ibm/response_files/my_was_response.xml'
-  imcl_dir '/opt/ibm/InstallationManager/eclipse/tools'
+  response_file '/opt/IBM/response_files/my_was_response.xml'
+  imcl_dir '/opt/IBM/InstallationManager/eclipse/tools'
   action :install
 end
