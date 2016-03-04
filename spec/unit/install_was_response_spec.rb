@@ -18,8 +18,8 @@ describe 'ibm-im-test::install_was_response' do
   end
 
   context 'when stepping into ibm_package_response resource' do
-    it 'creates log directory /var/ibm/InstallationManager/logs' do
-      expect(centos_67_install_was).to create_directory('/var/ibm/InstallationManager/logs').with(
+    it 'creates log directory /var/IBM/InstallationManager/logs' do
+      expect(centos_67_install_was).to create_directory('/var/IBM/InstallationManager/logs').with(
         user:   'ibm',
         group:  'ibm',
         mode:   '0755'
@@ -27,7 +27,7 @@ describe 'ibm-im-test::install_was_response' do
     end
 
     it 'executes imcl install' do
-      expect(centos_67_install_was).to run_execute('imcl input /opt/ibm/response_files/my_was_response.xml')
+      expect(centos_67_install_was).to run_execute('imcl input /opt/IBM/response_files/my_was_response.xml')
     end
   end
 end

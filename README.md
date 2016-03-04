@@ -160,13 +160,15 @@ end
 - `repositories`, Array of local dirs or urls to repositories.  Installation Kits may need to be packaged into a single folder, see the Requirements section above. [String, Array], required: true, default: nil
 - `service_user`, String, default: 'ibm'
 - `service_group`, String, default: 'ibm'
+- `properties`, Hash, A hash of properties that are usually found in response files.
+- `preferences`, Hash, A hash of preferences that are usually found in response files.
 - `additional_options`, a string of additional options to append if needed. String, default: ''
 - `access_rights`, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
 - `log_dir`, String, default: '/var/ibm/InstallationManager/logs'
 - `:passport_advantage`, When set to true adds passportAdvantafe repo url to repositories. default: false
 - `:secure_storage_file`, path to secure storage file to use for repo credentials. String, default: nil
 - `:master_pw_file`, path to file containing password to access encrypted secure_storage_file. String, default: nil
-
+- `:sensitive_exec`, Default: true, Only change this in exceptional debugging circumstances. When set to false you can see the imcl command being executed in the chef logs, which could contain a password.
 ##### Actions
 
 - `:install` - Installs the package. Does not start, setup a service at this stage.
@@ -203,6 +205,8 @@ end
 
 
 ### ibm_package_response
+
+NOTE: It's easier and more intuitive to use the ibm_package command and pass in properties and preferences instead of this resource.
 
 Installs an IBM package using a response file.
 Please note you may need to create and required users and directories mentioned in the response file first.  You do not need to accept the license or set the accessRights in the response file, this is handled with the command.

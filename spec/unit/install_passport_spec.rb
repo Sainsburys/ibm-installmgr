@@ -50,8 +50,8 @@ describe 'ibm-im-test::install_passport' do
       expect(centos_67_install_passport).to create_group('ibm')
     end
 
-    it 'creates log directory /var/ibm/InstallationManager/logs' do
-      expect(centos_67_install_passport).to create_directory('/var/ibm/InstallationManager/logs').with(
+    it 'creates log directory /var/IBM/InstallationManager/logs' do
+      expect(centos_67_install_passport).to create_directory('/var/IBM/InstallationManager/logs').with(
         user:   'ibm',
         group:  'ibm',
         mode:   '0755'
@@ -59,7 +59,7 @@ describe 'ibm-im-test::install_passport' do
     end
 
     it 'executes imcl install' do
-      expect(centos_67_install_passport).to run_execute('imcl install com.ibm.cic.packagingUtility')
+      expect(centos_67_install_passport).to run_execute('imcl install com.ibm.cic.packagingUtility').with(sensitive: true)
     end
   end
 end

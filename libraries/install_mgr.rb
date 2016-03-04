@@ -32,8 +32,8 @@ module InstallMgrCookbook
     property :install_dir, String, default: lazy { "#{ibm_root_dir}/InstallationManager/eclipse" }
     property :package_name, String, default: 'com.ibm.cic.agent'
     property :repositories, [String, Array], default: lazy { [extract_dir] }
-    property :ibm_root_dir, String, default: '/opt/ibm'
-    property :data_location, String, default: '/var/ibm/InstallationManager'
+    property :ibm_root_dir, String, default: '/opt/IBM'
+    property :data_location, String, default: '/var/IBM/InstallationManager'
     property :service_user, String, default: 'ibm-im'
     property :service_group, String, default: 'ibm-im'
     property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
@@ -144,11 +144,11 @@ module InstallMgrCookbook
       end
 
       def extract_tar(local_file, target_dir)
-        if ::File.extname(local_file) == '.gz'
-          cmd = "tar -zxf #{local_file} --strip-components=1 --no-same-owner -C #{target_dir}"
-        else
-          cmd = "tar -xf #{local_file} --strip-components=1 --no-same-owner -C #{target_dir}"
-        end
+        cmd = if ::File.extname(local_file) == '.gz'
+                "tar -zxf #{local_file} --strip-components=1 --no-same-owner -C #{target_dir}"
+              else
+                "tar -xf #{local_file} --strip-components=1 --no-same-owner -C #{target_dir}"
+              end
 
         execute 'untar ibm-im installer package' do
           command cmd

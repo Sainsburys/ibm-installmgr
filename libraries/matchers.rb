@@ -8,6 +8,10 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:ibm_package, :install, resource_name)
   end
 
+  def install_ibm_fixpack(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:ibm_fixpack, :install, resource_name)
+  end
+
   def install_ibm_package_response(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:ibm_package_response, :install, resource_name)
   end

@@ -9,10 +9,10 @@ describe group('ibm-im') do
   it { should exist }
 end
 
-describe file('/opt/ibm/InstallationManager/eclipse/tools/imcl') do
+describe file('/opt/IBM/InstallationManager/eclipse/tools/imcl') do
   it { should exist }
 end
 
-describe command('/opt/ibm/InstallationManager/eclipse/tools/imcl listInstalledPackages') do
+describe command('/opt/IBM/InstallationManager/eclipse/tools/imcl listInstalledPackages') do
   its(:stdout) { should match(/com.ibm.cic.agent.*/) }
 end
