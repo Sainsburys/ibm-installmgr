@@ -25,9 +25,9 @@ module InstallMgrCookbook
     property :response_file, String, name_property: true
     property :group, String, default: 'ibm-im'
     property :owner, String, default: 'ibm-im'
-    property :template_source, String, default: nil
-    property :cookbook, String, default: nil
-    property :variables, [Hash], default: nil
+    property :template_source, [String, nil], default: nil
+    property :cookbook, [String, nil], default: nil
+    property :variables, [Hash, nil], default: nil
 
     action :create do
       config_dir = ::File.dirname(response_file)

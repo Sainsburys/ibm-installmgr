@@ -25,8 +25,8 @@ module InstallMgrCookbook
     include InstallMgrHelpers
 
     resource_name :install_mgr
-    property :install_package, String, required: true, default: nil # can be url or local path to a compressed file
-    property :install_package_sha256, String, default: nil
+    property :install_package, String, required: true # can be url or local path to a compressed file
+    property :install_package_sha256, [String, nil], default: nil
     property :download_temp_dir, String, default: Chef::Config['file_cache_path']
     property :extract_dir, String, default: lazy { "#{download_temp_dir}/ibm-installmgr" }
     property :install_dir, String, default: lazy { "#{ibm_root_dir}/InstallationManager/eclipse" }
