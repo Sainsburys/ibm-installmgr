@@ -25,7 +25,7 @@ module InstallMgrCookbook
 
     resource_name :ibm_package_response
     property :package, String, name_property: true
-    property :response_file, String, required: true, default: nil
+    property :response_file, String, required: true
     property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
     property :log_dir, String, default: '/var/IBM/InstallationManager/logs'
     property :pkg_group, String, default: 'ibm'

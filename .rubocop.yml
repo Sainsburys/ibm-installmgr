@@ -4,6 +4,6 @@
 LineLength:
   Max: 180
 
-##  don't need class documentation header for custom resources. 
+##  don't need class documentation header for custom resources.
 Documentation:
   Enabled: false

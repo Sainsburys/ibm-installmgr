@@ -22,13 +22,13 @@ module InstallMgrCookbook
   class IbmSecureStorageFile < Chef::Resource
     resource_name :ibm_secure_storage_file
     property :secure_file, String, name_property: true
-    property :master_pw_file, String, default: nil
-    property :master_pw, String, default: nil
+    property :master_pw_file, [String, nil], default: nil
+    property :master_pw, [String, nil], default: nil
     property :url, String, default: 'http://www.ibm.com/software/repositorymanager/entitled/repository.xml'
     property :imutilsc_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
     property :passport_advantage, [TrueClass, FalseClass], default: false
-    property :username, String, default: nil
-    property :password, String, default: nil
+    property :username, [String, nil], default: nil
+    property :password, [String, nil], default: nil
     property :sensitive_exec, [TrueClass, FalseClass], default: true
 
     action :create do

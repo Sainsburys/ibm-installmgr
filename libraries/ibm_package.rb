@@ -24,21 +24,21 @@ module InstallMgrCookbook
     include InstallMgrHelpers
 
     resource_name :ibm_package
-    property :package, String, required: true, default: nil # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
-    property :install_dir, String, required: true, default: nil
+    property :package, String, required: true # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
+    property :install_dir, String, required: true
     property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
-    property :repositories, [String, Array], default: nil
+    property :repositories, [String, Array, nil], default: nil
     property :passport_advantage, [TrueClass, FalseClass], default: false
     property :service_user, String, default: 'ibm'
     property :service_group, String, default: 'ibm'
-    property :properties, [Hash], default: nil
-    property :preferences, [Hash], default: nil
+    property :properties, [Hash, nil], default: nil
+    property :preferences, [Hash, nil], default: nil
     property :install_fixes, String, default: 'none', regex: /^(none|recommended|all)$/
     property :additional_options, String, default: ''
     property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
     property :log_dir, String, default: '/var/IBM/InstallationManager/logs'
-    property :secure_storage_file, String, default: nil
-    property :master_pw_file, String, default: nil
+    property :secure_storage_file, [String, nil], default: nil
+    property :master_pw_file, [String, nil], default: nil
     property :sensitive_exec, [TrueClass, FalseClass], default: true # only turn this off in exceptional debugging circumstances.
 
     # TODO: Include the below properties at some stage
