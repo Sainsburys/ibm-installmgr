@@ -92,14 +92,14 @@ module InstallMgrCookbook
         preferences_str = preferences.map { |k, v| "#{k}=#{v}" }.join(',') if preferences
 
         options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
-        "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
+        "-log '#{log_dir}/#{logfile}' -acceptLicense #{additional_options}"
 
         options << " -repositories '#{repositories_str}' " if repositories
         options << " -installFixes #{install_fixes}"
         options << ' -connectPassportAdvantage' if passport_advantage
         options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
-        options << " -properties #{properties_str}" if properties
-        options << " -preferences #{preferences_str}" if preferences
+        options << " -properties \"#{properties_str}\"" if properties
+        options << " -preferences \"#{preferences_str}\"" if preferences
 
         imcl_wrapper(imcl_dir, "./imcl install '#{package}' -showProgress", options)
 

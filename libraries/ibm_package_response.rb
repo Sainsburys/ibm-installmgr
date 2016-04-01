@@ -28,17 +28,42 @@ module InstallMgrCookbook
     property :response_file, String, required: true
     property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
     property :log_dir, String, default: '/var/IBM/InstallationManager/logs'
-    property :pkg_group, String, default: 'ibm'
-    property :pkg_owner, String, default: 'ibm'
+    # property :pkg_group, String, default: 'ibm'
+    # property :pkg_owner, String, default: 'ibm'
+    property :service_user, String, default: 'ibm'
+    property :service_group, String, default: 'ibm'
     property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
 
     provides :ibm_package_response if defined?(provides)
 
     action :install do
+
       unless package_installed?(package, imcl_dir)
+        user service_user do
+          comment 'ibm installation mgr service account'
+          home "/home/#{service_user}"
+          shell '/bin/bash'
+          not_if { service_user == 'root' }
+        end
+
+        directory "/home/#{service_user}" do
+          owner service_user
+          group service_user
+          mode '0750'
+          recursive true
+          action :create
+          not_if { service_user == 'root' }
+        end
+
+        group service_group do
+          members service_user
+          append true
+          not_if { service_group == 'root' }
+        end
+
         directory log_dir do
-          owner pkg_owner
-          group pkg_group
+          owner service_user
+          group service_group
           mode '0755'
           recursive true
           action :create
