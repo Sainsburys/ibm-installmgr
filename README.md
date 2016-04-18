@@ -11,7 +11,6 @@ Group install mode has not been tested. Only admin and nonAdmin have.
 
 ## Requirements
 * Chef 12.5 or higher
-* Java needs to be pre-installed. The libraries do not install Java intentionally so it can me managed separately in your wrapper.
 * Installation Media for Installation manager and any other packages.
 This can be sourced from an online repository like IBM PassportAdvantage, or from your own download link.  Supports tar, tar.gz and zip.
 * Installation Kits may need to be packaged into a single folder.  For example the Websphere installation kit comes in 3 folders disk1, disk2 and disk3.  Make sure all disks are in the same folder like so:
@@ -34,11 +33,6 @@ See the test cookbook in test/fixtures/cookbooks/ibm-im-test for examples.
 
 ##### Install Installation Manager
 ```ruby
-# install java
-node.default['java']['jdk_version'] = '7'
-node.default['java']['install_flavor'] = 'oracle'
-node.default['java']['oracle']['accept_oracle_download_terms'] = true
-include_recipe 'java'
 
 install_mgr 'ibm-im install' do
   install_package 'https://myrepository/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip'
