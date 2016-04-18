@@ -130,6 +130,7 @@ Installs an IBM application using Installation Manager
 ```ruby
 # ... omitted ibm_secure_storage_file resource.
 
+# example to install IHS HTTP Server
 ibm_package 'IHS install' do
   package 'com.ibm.websphere.IHS.v85,core.feature,arch.64bit'
   install_dir '/opt/ibm/HTTPServer'
@@ -147,6 +148,30 @@ ibm_package 'IHS install' do
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.IHS.v85']
   master_pw_file '/root/MyMasterPassFile'
   secure_storage_file '/root/MySecureStorageFile'
+  action :install
+end
+
+# example to install IBM Directory server.  Note the dual value properties containing two commas ,,
+
+ibm_package 'IBM Diretcory Server' do
+  package 'com.ibm.security.directoryserver.v64,main.feature.db2,main.feature.gskit,main.feature.jdk,main.feature.javaclient,'\
+    'main.feature.server,main.feature.cclient,main.feature.proxy,main.feature.webadmin'
+  install_dir '/opt/ibm/ldap/V6.4'
+  repositories [sds_repo]
+  access_rights 'admin'
+  properties ({
+    'eclipseLocation' => '/opt/ibm/ldap/V6.4',
+    'user.import.profile' => 'false',
+    'cic.selector.os' => 'linux',
+    'cic.selector.arch' => 'x86_64',
+    'cic.selector.ws' => 'gtk',
+    'user.use.existing.db2,,com.ibm.security.directoryserver.v64' => 'false',
+    'user.db2.executable.path,,com.ibm.security.directoryserver.v64' => db2_installer_dir,
+    'user.use.existing.gskit,,com.ibm.security.directoryserver.v64' => 'false',
+    'user.gskit.executable.path,,com.ibm.security.directoryserver.v64' => gskit_installer_dir,
+    'user.jdk.executable.path,,com.ibm.security.directoryserver.v64' => jdk_installer
+  })
+  sensitive_exec false
   action :install
 end
 
@@ -172,6 +197,34 @@ end
 ##### Actions
 
 - `:install` - Installs the package. Does not start, setup a service at this stage.
+
+### ibm_fixpack
+
+Similar to ibm_package but specifically installs an IBM fixpack. All parameters are exactly the same as ibm_package.
+
+##### Example
+```ruby
+
+# ... omitted required ibm_secure_storage_file resource.
+
+ibm_fixpack 'WAS ND Fixpack' do
+  package 'com.ibm.websphere.ND.v85_8.5.5008.20151112_0939,core.feature,ejbdeploy,thinclient,embeddablecontainer,com.ibm.sdk.6_64bit'
+  install_dir '/opt/IBM/Websphere/AppServer'
+  repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.ND.v85']
+  master_pw_file '/root/MyMasterPassFile'
+  secure_storage_file '/root/MySecureStorageFile'
+  action :install
+end
+
+```
+
+##### Parameters
+
+Exactly the same as parameters for ibm_package
+
+##### Actions
+
+- `:install`
 
 
 ### ibm_response_file
