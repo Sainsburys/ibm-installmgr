@@ -12,10 +12,6 @@ describe 'ibm-im-test::install_im' do
 
   # test recipe compilation
   context 'when compiling the recipe' do
-    it 'includes the java recipe' do
-      expect(centos_67_install_im).to include_recipe('java')
-    end
-
     it 'installs install_mgr[ibm-im install]' do
       expect(centos_67_install_im).to install_install_mgr('ibm-im install')
     end
