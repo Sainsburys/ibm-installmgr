@@ -36,7 +36,7 @@ module InstallMgrCookbook
     property :data_location, String, default: '/var/IBM/InstallationManager'
     property :service_user, String, default: 'ibm-im'
     property :service_group, String, default: 'ibm-im'
-    property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
+    property :access_rights, String, default: 'admin', regex: /^(nonAdmin|admin|group)$/
     property :preferences, String, default: 'offering.service.repositories.areUsed=false'
 
     provides :install_mgr if defined?(provides)

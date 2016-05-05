@@ -35,7 +35,7 @@ module InstallMgrCookbook
     property :preferences, [Hash, nil], default: nil
     property :install_fixes, String, default: 'none', regex: /^(none|recommended|all)$/
     property :additional_options, String, default: ''
-    property :access_rights, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
+    property :access_rights, String, default: 'admin', regex: /^(nonAdmin|admin|group)$/
     property :log_dir, String, default: '/var/IBM/InstallationManager/logs'
     property :secure_storage_file, [String, nil], default: nil
     property :master_pw_file, [String, nil], default: nil
@@ -50,7 +50,6 @@ module InstallMgrCookbook
 
     action :install do
       unless package_installed?(package, imcl_dir)
-
         user service_user do
           comment 'ibm installation mgr service account'
           home "/home/#{service_user}"
@@ -102,7 +101,6 @@ module InstallMgrCookbook
         options << " -preferences #{preferences_str}" if preferences
 
         imcl_wrapper(imcl_dir, "./imcl install '#{package}' -showProgress", options)
-
       end
     end
 
