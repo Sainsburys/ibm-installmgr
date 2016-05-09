@@ -1,6 +1,10 @@
 IBM Installation Manager Cookbook CHANGELOG
 ========================
 
+v1.2.0
+--------------------
+- change default access_rights from nonAdmin to admin
+
 v1.1.1
 --------------------
 - update readme with ibm_fixpack
