@@ -1,6 +1,6 @@
 # IBM Installation Manager Cookbook
 
-[![Build Status](https://travis-ci.org/JSainsburyPLC/ibm-installmgr.svg?branch=master)](https://travis-ci.org/JSainsburyPLC/ibm-installmgr)
+[![Build Status](https://travis-ci.org/Sainsburys/ibm-installmgr.svg?branch=master)](https://travis-ci.org/Sainsburys/ibm-installmgr)
 
 ## Scope
 This cookbook installs IBM Installation Manager and provides resources for installing IBM packages with a response file.

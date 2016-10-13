@@ -91,7 +91,7 @@ module InstallMgrCookbook
         execute "imcl install #{package}" do
           cwd imcl_dir
           command command
-          sensitive sensitive
+          sensitive sensitive_exec
           action :run
         end
       end
