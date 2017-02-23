@@ -7,3 +7,6 @@ LineLength:
 ##  don't need class documentation header for custom resources.
 Documentation:
   Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
