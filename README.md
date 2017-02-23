@@ -272,8 +272,8 @@ end
 - `response_file`, String, name_property: true, required: true
 - `imcl_dir`, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
 - `log_dir`, String, default: '/var/ibm/InstallationManager/logs'
-- `group`, Only used to for log_dir. String, default: 'ibm-im'
-- `owner`, Only used to for log_dir String, default: 'ibm-im'
+- `pkg_group`, Only used to for log_dir. String, default: 'ibm-im'
+- `pkg_owner`, Only used to for log_dir String, default: 'ibm-im'
 - `access_rights`, String, default: 'nonAdmin', regex: /^(nonAdmin|admin|group)$/
 
 ##### Actions
