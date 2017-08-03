@@ -1,6 +1,8 @@
 # IBM Installation Manager Cookbook
 
-[![Build Status](https://travis-ci.org/Sainsburys/ibm-installmgr.svg?branch=master)](https://travis-ci.org/Sainsburys/ibm-installmgr)
+## Fork alert
+This cookbook has been forked from
+https://github.com/Sainsburys/ibm-installmgr
 
 ## Scope
 This cookbook installs IBM Installation Manager and provides resources for installing IBM packages with a response file.
