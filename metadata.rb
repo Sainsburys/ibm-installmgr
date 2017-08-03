@@ -1,4 +1,4 @@
-name 'ibm-installmgr'
+name 'ibm-was-installer'
 maintainer 'Kidhar Bachan'
 maintainer_email 'Kidhar.Bachan@absa.co.za'
 license 'Apache 2.0'
