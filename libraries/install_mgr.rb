@@ -74,6 +74,7 @@ module InstallMgrCookbook
             mode '0750'
             recursive true
             action :create
+            not_if { ::Dir.exist?(dir) }
           end
         end
 
