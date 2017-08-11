@@ -89,7 +89,7 @@ module InstallMgrCookbook
               owner new_resource.service_user
               group new_resource.service_group
               mode '0750'
-              checksum install_package_sha256
+              checksum new_resource.install_package_sha256
               action :create
             end
           end
@@ -140,7 +140,7 @@ module InstallMgrCookbook
       def local_installer_file
         if url?(new_resource.install_package)
           filename = ::File.basename(new_resource.install_package)
-          local_file = "#{download_temp_dir}/#{filename}"
+          local_file = "#{new_resource.download_temp_dir}/#{filename}"
         else
           local_file = new_resource.install_package
         end
