@@ -130,7 +130,7 @@ module InstallMgrCookbook
     # so they are available in the action.
     action_class.class_eval do
       def url?(string)
-        checks = %w(http https)
+        checks = %w(http https file)
         checks.any? { |str| string.include? str }
       end
 
