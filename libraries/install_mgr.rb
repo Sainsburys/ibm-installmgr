@@ -120,6 +120,8 @@ module InstallMgrCookbook
         execute "install im #{new_resource.package_name}" do
           cwd "#{new_resource.extract_dir}/tools"
           command cmd
+          user new_resource.service_user
+          group new_resource.service_group
           action :run
         end
 
@@ -154,6 +156,8 @@ module InstallMgrCookbook
 
         execute 'untar ibm-im installer package' do
           command cmd
+          user new_resource.service_user
+          group new_resource.service_group
           not_if { ::File.exist?("#{target_dir}/tools") }
         end
       end
@@ -163,6 +167,8 @@ module InstallMgrCookbook
 
         execute 'unzip ibm-im installer package' do
           command "unzip -o #{local_file} -d #{target_dir}"
+          user new_resource.service_user
+          group new_resource.service_group
           not_if { ::File.exist?("#{target_dir}/tools") }
         end
       end

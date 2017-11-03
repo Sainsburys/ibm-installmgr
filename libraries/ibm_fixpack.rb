@@ -92,6 +92,8 @@ module InstallMgrCookbook
           cwd new_resource.imcl_dir
           command command
           sensitive new_resource.sensitive_exec
+          user new_resource.service_user
+          group new_resource.service_group
           action :run
         end
       end
