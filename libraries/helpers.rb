@@ -21,12 +21,14 @@ module InstallMgrCookbook
     def package_installed?(package, imcl_dir, fixpack = false)
       main_pkg = package.split(',').first
       main_pkg = main_pkg.split('_').first unless fixpack
-      mycmd = Mixlib::ShellOut.new('./imcl listInstalledPackages', cwd: imcl_dir)
+      mycmd = Mixlib::ShellOut.new(
+        './imcl listInstalledPackages',
+        :user => node['was']['service_user'],
+        :group => node['was']['service_group'],
+        cwd: imcl_dir
+      )
       mycmd.run_command
-      mycmd.stdout.split(/\n/).map do |pkg|
-        return true if pkg.include? main_pkg
-      end
-      false
+      mycmd.stdout.include? main_pkg
     end
   end
 end

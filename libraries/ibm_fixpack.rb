@@ -29,28 +29,6 @@ module InstallMgrCookbook
     action :install do
       unless package_installed?(new_resource.package, new_resource.imcl_dir, true)
 
-        user new_resource.service_user do
-          comment 'ibm installation mgr service account'
-          home "/home/#{new_resource.service_user}"
-          shell '/bin/bash'
-          not_if { new_resource.service_user == 'root' }
-        end
-
-        directory "/home/#{new_resource.service_user}" do
-          owner new_resource.service_user
-          group new_resource.service_user
-          mode '0750'
-          recursive true
-          action :create
-          not_if { new_resource.service_user == 'root' }
-        end
-
-        group new_resource.service_group do
-          members new_resource.service_user
-          append true
-          not_if { new_resource.service_group == 'root' }
-        end
-
         directory new_resource.log_dir do
           owner new_resource.service_user
           group new_resource.service_group
@@ -92,6 +70,8 @@ module InstallMgrCookbook
           cwd new_resource.imcl_dir
           command command
           sensitive new_resource.sensitive_exec
+          user new_resource.service_user
+          group new_resource.service_group
           action :run
         end
       end
