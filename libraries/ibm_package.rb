@@ -3,7 +3,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: ibm_package
 #
-# Copyright (C) 2018 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,11 +40,6 @@ module InstallMgrCookbook
     property :secure_storage_file, [String, nil], default: nil
     property :master_pw_file, [String, nil], default: nil
     property :sensitive_exec, [TrueClass, FalseClass], default: true # only turn this off in exceptional debugging circumstances.
-
-    # TODO: Include the below properties at some stage
-    # property :install_fixes, String, default: 'none', :regex => /^(none|recommended|all)$/
-    # property :preferences, [Hash], default: nil
-    # property :properties, [Hash], default: nil
 
     provides :ibm_package if defined?(provides)
 
@@ -87,8 +82,8 @@ module InstallMgrCookbook
 
         # packages_str = packages.join(' ') if packages
         repositories_str = new_resource.repositories.join(', ') if new_resource.repositories
-        properties_str = properties.map { |k, v| "#{k}=#{v}" }.join(',') if new_resource.properties
-        preferences_str = preferences.map { |k, v| "#{k}=#{v}" }.join(',') if new_resource.preferences
+        properties_str = new_resource.properties.map { |k, v| "#{k}=#{v}" }.join(',') if new_resource.properties
+        preferences_str = new_resource.preferences.map { |k, v| "#{k}=#{v}" }.join(',') if new_resource.preferences
 
         options = "-installationDirectory '#{new_resource.install_dir}' "\
         "-accessRights '#{new_resource.access_rights}' -log #{new_resource.log_dir}/#{logfile} "\
@@ -97,7 +92,7 @@ module InstallMgrCookbook
         options << " -repositories '#{repositories_str}' " if new_resource.repositories
         options << " -installFixes #{new_resource.install_fixes}"
         options << ' -connectPassportAdvantage' if new_resource.passport_advantage
-        options << " -masterPasswordFile #{new_resource.master_pw_file} -secureStorageFile #{secure_storage_file}" if new_resource.master_pw_file
+        options << " -masterPasswordFile #{new_resource.master_pw_file} -secureStorageFile #{new_resource.secure_storage_file}" if new_resource.master_pw_file
         options << " -properties #{properties_str}" if new_resource.properties
         options << " -preferences #{preferences_str}" if new_resource.preferences
 

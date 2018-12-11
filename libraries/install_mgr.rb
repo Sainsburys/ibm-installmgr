@@ -2,7 +2,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: install_mgr
 #
-# Copyright (C) 2018 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -67,8 +67,8 @@ module InstallMgrCookbook
         end
 
         # create required dirs
-        dirs = ["#{new_resource.ibm_root_dir}", "#{new_resource.extract_dir}",\
-                "#{new_resource.install_dir}", "#{new_resource.data_location}"]
+        dirs = [new_resource.ibm_root_dir.to_s, new_resource.extract_dir.to_s,\
+                new_resource.install_dir.to_s, new_resource.data_location.to_s]
         dirs.each do |dir|
           directory dir do
             owner new_resource.service_user

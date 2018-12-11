@@ -3,7 +3,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: ibm_response_file
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,24 +30,24 @@ module InstallMgrCookbook
     property :variables, [Hash, nil], default: nil
 
     action :create do
-      config_dir = ::File.dirname(response_file)
+      config_dir = ::File.dirname(new_resource.response_file)
 
       directory config_dir do
-        owner owner
-        group group
+        owner new_resource.owner
+        group new_resource.group
         mode '0750'
         recursive true
         action :create
       end
 
-      template "response_file :create #{response_file}" do
-        path response_file
-        owner owner
-        group group
+      template "response_file :create #{new_resource.response_file}" do
+        path new_resource.response_file
+        owner new_resource.owner
+        group new_resource.group
         mode '0750'
-        source template_source
-        cookbook cookbook
-        variables variables
+        source new_resource.template_source
+        cookbook new_resource.cookbook
+        variables new_resource.variables
         action :create
       end
     end

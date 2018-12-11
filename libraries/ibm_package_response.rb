@@ -3,7 +3,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: ibm_package_response
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,19 +35,23 @@ module InstallMgrCookbook
     provides :ibm_package_response if defined?(provides)
 
     action :install do
-      unless package_installed?(package, imcl_dir)
-        directory log_dir do
-          owner pkg_owner
-          group pkg_group
+      unless package_installed?(new_resource.package, new_resource.imcl_dir)
+        directory new_resource.log_dir do
+          owner new_resource.pkg_owner
+          group new_resource.pkg_group
           mode '0755'
           recursive true
           action :create
         end
 
         date = Time.now.strftime('%d%b%Y-%H%M')
-        filename = ::File.basename(response_file, '.xml')
+        filename = ::File.basename(new_resource.response_file, '.xml')
         logfile = "#{filename}-#{date}.log"
-        imcl_wrapper(imcl_dir, "./imcl -accessRights \"#{access_rights}\" input \"#{response_file}\"", "-log \"#{log_dir}/#{logfile}\" -acceptLicense")
+        imcl_wrapper(
+          new_resource.imcl_dir,
+          "./imcl -accessRights \"#{new_resource.access_rights}\" input \"#{new_resource.response_file}\"",
+          "-log \"#{new_resource.log_dir}/#{logfile}\" -acceptLicense"
+        )
       end
     end
 
@@ -57,8 +61,8 @@ module InstallMgrCookbook
       def imcl_wrapper(_imcl_directory, cmd, options)
         command = "#{cmd} #{options}"
 
-        execute "imcl input #{response_file}" do
-          cwd imcl_dir
+        execute "imcl input #{new_resource.response_file}" do
+          cwd _imcl_directory
           command command
           action :run
         end

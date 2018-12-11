@@ -3,7 +3,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: ibm_secure_storage_file
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,27 +32,27 @@ module InstallMgrCookbook
     property :sensitive_exec, [TrueClass, FalseClass], default: true
 
     action :create do
-      file master_pw_file do
-        content master_pw
+      file new_resource.master_pw_file do
+        content new_resource.master_pw
         mode '0600'
         sensitive true
       end
 
       # if passportAdvantage ignore url.
-      if passport_advantage
-        cmd = "./imutilsc saveCredential  -passportAdvantage -userName \"#{username}\" -userPassword "\
-        "\"#{password}\" -secureStorageFile \"#{secure_file}\" -masterPasswordFile \"#{master_pw_file}\""
-      else
-        cmd = "./imutilsc saveCredential  -url \"#{url}\" -userName \"#{username}\" -userPassword "\
-        "\"#{password}\" -secureStorageFile \"#{secure_file}\" -masterPasswordFile \"#{master_pw_file}\""
-      end
+      cmd = if new_resource.passport_advantage
+              "./imutilsc saveCredential  -passportAdvantage -userName \"#{new_resource.username}\" -userPassword "\
+              "\"#{new_resource.password}\" -secureStorageFile \"#{new_resource.secure_file}\" -masterPasswordFile \"#{new_resource.master_pw_file}\""
+            else
+              "./imutilsc saveCredential  -url \"#{new_resource.url}\" -userName \"#{new_resource.username}\" -userPassword "\
+              "\"#{new_resource.password}\" -secureStorageFile \"#{new_resource.secure_file}\" -masterPasswordFile \"#{new_resource.master_pw_file}\""
+            end
 
-      execute "imutilsc command #{secure_file}" do
-        cwd imutilsc_dir
+      execute "imutilsc command #{new_resource.secure_file}" do
+        cwd new_resource.imutilsc_dir
         command cmd
-        sensitive sensitive_exec
+        sensitive new_resource.sensitive_exec
         action :run
-        not_if { ::File.exist?(secure_file) }
+        not_if { ::File.exist?(new_resource.secure_file) }
       end
     end
   end

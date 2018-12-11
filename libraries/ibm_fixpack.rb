@@ -3,7 +3,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: ibm_package
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ module InstallMgrCookbook
 
         options << " -repositories '#{repositories_str}' " if new_resource.repositories
         options << ' -connectPassportAdvantage' if new_resource.passport_advantage
-        options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if new_resource.master_pw_file
+        options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{new_resource.secure_storage_file}" if new_resource.master_pw_file
         options << " -properties #{properties_str}" if new_resource.properties
         options << " -preferences #{preferences_str}" if new_resource.preferences
 
