@@ -1,6 +1,10 @@
 IBM Installation Manager Cookbook CHANGELOG
 ========================
 
+v1.3.0
+--------------------
+- fix Chef 13 deprecation messages
+
 v1.2.0
 --------------------
 - change default access_rights from nonAdmin to admin
