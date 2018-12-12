@@ -34,7 +34,7 @@ describe 'ibm-im-test::install_im' do
       expect(centos_67_install_im).to create_group('ibm-im')
     end
 
-    dirs = %w(ibm_root_dir extract_dir install_dir data_location)
+    dirs = %w[ibm_root_dir extract_dir install_dir data_location]
     it 'creates these directories' do
       dirs.each do |dir|
         expect(centos_67_install_im).to create_directory(dir).with(

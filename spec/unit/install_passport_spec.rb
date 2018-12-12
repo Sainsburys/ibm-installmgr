@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'ibm-im-test::install_passport' do
   cached(:centos_67_install_passport) do
     ChefSpec::ServerRunner.new(
-      step_into: %w(ibm_secure_storage_file ibm_package),
+      step_into: %w[ibm_secure_storage_file ibm_package],
       platform: 'centos',
       version: '6.6'
     ) do |node|

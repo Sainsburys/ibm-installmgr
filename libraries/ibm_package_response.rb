@@ -62,7 +62,7 @@ module InstallMgrCookbook
         command = "#{cmd} #{options}"
 
         execute "imcl input #{new_resource.response_file}" do
-          cwd _imcl_directory
+          cwd new_resource.imcl_dir
           command command
           action :run
         end
