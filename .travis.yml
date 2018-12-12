@@ -1,46 +1,38 @@
 rvm: 2.2
-
 sudo: required
-
 addons:
   apt:
     sources:
-      - chef-stable-precise
+    - chef-stable-precise
     packages:
-      - chefdk
-
+    - chefdk
 install: echo "skip bundle install"
-
 services: docker
-
 env:
+  global:
+  - secure: FpIjnMHGr5UKmoWXt9xooKmIc0t+XOhNKllS1ZNLsxa0IlCsjhsJGf2CMVTSf7f6Do5jgD1aJDb2+7QbLEpqSyqTAQ/J+8KQgkSNn+zuJ/PvSp6hkfzP2nBgKfuBEea9CnS2GzZZ+BfPKht3BwcQcy6VrAmcq6W7zNVbfotRbBp6fD/GB3EQ4uyb+BXvSTTB1ol6i9Qb2Ax6cj1bOHJNE6GGrCiQlQV0C9tedKEgp7GxTvOJa/O6syVNpnmL9eOYcJdhy0qiJfmnuaAIWVLxdexdITgBBexyVl4TnZu6w6AHjC8WHxUCPXF3vx0lEowB+O+tOZ4dkNFgJUSDWbAfI+/XF5wu/KgAd/hrtNf0hujOGIk8iuv8OsVKt+guy6/zkcuXd/cmmBK2+unSZHeG/M9x/Nf8LE0Gs8v+kU4hg3sSpWcL2+vbWuUQlyJ2mH7S0Io5GeoAxfpFHUNwQtLiQG3w8c7F4Z+jQUXxtuzkAqY++NwUU+0ZuA+ZDk1X8aiBYqSCoksyYcKk3LQ6FtjukKFbkOJ+xLTPMoUkW9ytQN4lGV/FVC6LIjRLffy/F107thNWI6cc0l3u5Q80jw27qpzWIVzQaD0z9UKyc5hfJe2IgSOn16V9eEFWsedKDssyq4aY3JYjeGJNYWBcyfKLwwuR7LBjVZNPRWMmAHIMTeY=
+  - secure: qXlYDTj0hovjabiGrL9cpO1XmR+38WYROw13ZEfJ4CGNYOnTC4qICrV1xGO7MPLBtv1rl9eeR3p6JhLaywN+zWVmstFue1kdMYGuyfEeVAhpFwrT749r1rijSHK+utbg00vv6BE+K+7nNVTVn+i8YLR9l0d2oy5chEOmv/DEhpk7v58aCqEhuqc/D91XP5jxBBpc0EFVo/xZMTRuPjfzk38xxKb6fihHC1CviODXZLBRLi/cpCR4mxgIj+X3ep9pHwWsW0y7cHxsYhvpYEMiuYNXRwmmc7p/K/RFeJhPMXnQlKlIUO9Qt5ypR0oMSS2vsY0Y0AvwzHqjAc0UF/rQ0WIEatefv7OdN+9SL/QWC+e9uu6LKD40eZrNYU7RzP7pAmFwXObZ7lm7shjmSDTvoA4WvIuOzV3OURJW5Vh8zNR6qsoTMfx+0VP1KdlN3oVr6M/PYCRSfly1LHucsyAzEUMLZaB75CRvMvyO2mU44Zx+izrkiOZxrV4oYBUT0blEiRq12B9kj7kAmzVoqBambErzpuOaHeJCx73UKScxNg51ikdA5+tU+6zhib7z16XV07SGt/GHy9x1zSXzxHdez4V/3O9GzWzi6k2v01jmPTt/xMcv0Uwlh2tPJvkkT4Rnssmus44q9dj5Z0UCXKLA7DZ12y244gz24QgUwn1GDkA=
   matrix:
   - INSTANCE=install-im-centos-6
   - INSTANCE=install-im-centos-7
-  #- INSTANCE=install-im-ubuntu-1204
-  #- INSTANCE=install-im-ubuntu-1404
   - INSTANCE=install-passport-centos-6
   - INSTANCE=install-passport-centos-7
-  #- INSTANCE=install-passport-ubuntu-1204
-  #- INSTANCE=install-passport-ubuntu-1404
   fast_finish: true
-
 before_script:
-  - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
-  - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-  - /opt/chefdk/embedded/bin/chef gem install kitchen-dokken
-
+- sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables
+  -N DOCKER )
+- eval "$(/opt/chefdk/bin/chef shell-init bash)"
+- "/opt/chefdk/embedded/bin/chef gem install kitchen-dokken"
 script:
-  - bundle install
-  - /opt/chefdk/embedded/bin/chef --version
-  - chefstyle --version
-  - chefstyle
-  - foodcritic --version
-  - foodcritic . --exclude spec
-  - chef exec rspec
-  - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
-
+- bundle install
+- "/opt/chefdk/embedded/bin/chef --version"
+- chefstyle --version
+- chefstyle
+- foodcritic --version
+- foodcritic . --exclude spec
+- chef exec rspec
+- KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
 after_script:
-  - docker images
-  - docker ps -a
-  - cat .kitchen/logs/kitchen.log
+- docker images
+- docker ps -a
+- cat .kitchen/logs/kitchen.log
