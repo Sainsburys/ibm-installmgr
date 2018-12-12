@@ -3,9 +3,7 @@ require 'spec_helper'
 describe 'ibm-im-test::install_was_response' do
   cached(:centos_67_install_was) do
     ChefSpec::ServerRunner.new(
-      step_into: 'ibm_package_response',
-      platform: 'centos',
-      version: '6.6'
+      step_into: 'ibm_package_response'
     ) do
     end.converge('ibm-im-test::install_was_response')
   end

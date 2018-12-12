@@ -3,12 +3,10 @@ require 'spec_helper'
 describe 'ibm-im-test::install_passport' do
   cached(:centos_67_install_passport) do
     ChefSpec::ServerRunner.new(
-      step_into: %w[ibm_secure_storage_file ibm_package],
-      platform: 'centos',
-      version: '6.6'
+      step_into: %w[ibm_secure_storage_file ibm_package]
     ) do |node|
-      node.set['ibm-im-test']['passport_advantage']['user'] = 'dummyuser'
-      node.set['ibm-im-test']['passport_advantage']['password'] = 'dummypw'
+      node.default['ibm-im-test']['passport_advantage']['user'] = 'dummyuser'
+      node.default['ibm-im-test']['passport_advantage']['password'] = 'dummypw'
     end.converge('ibm-im-test::install_passport')
   end
 

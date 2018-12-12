@@ -33,11 +33,11 @@ before_script:
 script:
   - bundle install
   - /opt/chefdk/embedded/bin/chef --version
-  - rubocop --version
-  - rubocop
+  - chefstyle --version
+  - chefstyle
   - foodcritic --version
   - foodcritic . --exclude spec
-  - bundle exec rspec
+  - chef exec rspec
   - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
 
 after_script:
