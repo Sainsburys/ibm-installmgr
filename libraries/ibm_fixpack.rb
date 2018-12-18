@@ -3,7 +3,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: ibm_package
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,58 +27,58 @@ module InstallMgrCookbook
     resource_name :ibm_fixpack
 
     action :install do
-      unless package_installed?(package, imcl_dir, true)
+      unless package_installed?(new_resource.package, new_resource.imcl_dir, true)
 
-        user service_user do
+        user new_resource.service_user do
           comment 'ibm installation mgr service account'
-          home "/home/#{service_user}"
+          home "/home/#{new_resource.service_user}"
           shell '/bin/bash'
-          not_if { service_user == 'root' }
+          not_if { new_resource.service_user == 'root' }
         end
 
-        directory "/home/#{service_user}" do
-          owner service_user
-          group service_user
+        directory "/home/#{new_resource.service_user}" do
+          owner new_resource.service_user
+          group new_resource.service_user
           mode '0750'
           recursive true
           action :create
-          not_if { service_user == 'root' }
+          not_if { new_resource.service_user == 'root' }
         end
 
-        group service_group do
-          members service_user
+        group new_resource.service_group do
+          members new_resource.service_user
           append true
-          not_if { service_group == 'root' }
+          not_if { new_resource.service_group == 'root' }
         end
 
-        directory log_dir do
-          owner service_user
-          group service_group
+        directory new_resource.log_dir do
+          owner new_resource.service_user
+          group new_resource.service_group
           mode '0755'
           recursive true
           action :create
         end
 
         date = Time.now.strftime('%d%b%Y-%H%M')
-        main_pkg = package.split(',').first
+        main_pkg = new_resource.package.split(',').first
         main_pkg = main_pkg.split('_').first
         logfile = "#{main_pkg}-install-#{date}.log"
 
         # packages_str = packages.join(' ') if packages
-        repositories_str = repositories.join(', ') if repositories
-        properties_str = properties.map { |k, v| "#{k}=#{v}" }.join(',') if properties
-        preferences_str = preferences.map { |k, v| "#{k}=#{v}" }.join(',') if preferences
+        repositories_str = new_resource.repositories.join(', ') if new_resource.repositories
+        properties_str = new_resource.properties.map { |k, v| "#{k}=#{v}" }.join(',') if new_resource.properties
+        preferences_str = new_resource.preferences.map { |k, v| "#{k}=#{v}" }.join(',') if new_resource.preferences
 
-        options = "-installationDirectory '#{install_dir}' -accessRights '#{access_rights}' "\
-        "-log #{log_dir}/#{logfile} -acceptLicense #{additional_options}"
+        options = "-installationDirectory '#{new_resource.install_dir}' -accessRights '#{new_resource.access_rights}' "\
+        "-log #{new_resource.log_dir}/#{logfile} -acceptLicense #{new_resource.additional_options}"
 
-        options << " -repositories '#{repositories_str}' " if repositories
-        options << ' -connectPassportAdvantage' if passport_advantage
-        options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{secure_storage_file}" if master_pw_file
-        options << " -properties #{properties_str}" if properties
-        options << " -preferences #{preferences_str}" if preferences
+        options << " -repositories '#{repositories_str}' " if new_resource.repositories
+        options << ' -connectPassportAdvantage' if new_resource.passport_advantage
+        options << " -masterPasswordFile #{master_pw_file} -secureStorageFile #{new_resource.secure_storage_file}" if new_resource.master_pw_file
+        options << " -properties #{properties_str}" if new_resource.properties
+        options << " -preferences #{preferences_str}" if new_resource.preferences
 
-        imcl_wrapper(imcl_dir, "./imcl install '#{package}' -showProgress", options)
+        imcl_wrapper(new_resource.imcl_dir, "./imcl install '#{new_resource.package}' -showProgress", options)
       end
     end
 
@@ -88,10 +88,10 @@ module InstallMgrCookbook
       def imcl_wrapper(_imcl_directory, cmd, options)
         command = "#{cmd} #{options}"
 
-        execute "imcl install #{package}" do
-          cwd imcl_dir
+        execute "imcl install #{new_resource.package}" do
+          cwd new_resource.imcl_dir
           command command
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end

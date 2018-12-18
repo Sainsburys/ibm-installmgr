@@ -2,7 +2,7 @@
 # Cookbook Name:: ibm-installmgr
 # Resource:: install_mgr
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,52 +42,54 @@ module InstallMgrCookbook
     provides :install_mgr if defined?(provides)
 
     action :install do
-      unless package_installed?(package_name, "#{install_dir}/tools")
+      unless package_installed?(new_resource.package_name, "#{new_resource.install_dir}/tools")
 
-        user service_user do
+        user new_resource.service_user do
           comment 'ibm installation mgr service account'
-          home "/home/#{service_user}"
+          home "/home/#{new_resource.service_user}"
           shell '/bin/bash'
-          not_if { service_user == 'root' }
+          not_if { new_resource.service_user == 'root' }
         end
 
-        directory "/home/#{service_user}" do
-          owner service_user
-          group service_user
+        directory "/home/#{new_resource.service_user}" do
+          owner new_resource.service_user
+          group new_resource.service_user
           mode '0750'
           recursive true
           action :create
-          not_if { service_user == 'root' }
+          not_if { new_resource.service_user == 'root' }
         end
 
-        group service_group do
-          members service_user
+        group new_resource.service_group do
+          members new_resource.service_user
           append true
-          not_if { service_group == 'root' }
+          not_if { new_resource.service_group == 'root' }
         end
 
         # create required dirs
-        dirs = %w(ibm_root_dir extract_dir install_dir data_location)
+        dirs = [new_resource.ibm_root_dir.to_s, new_resource.extract_dir.to_s,\
+                new_resource.install_dir.to_s, new_resource.data_location.to_s]
         dirs.each do |dir|
           directory dir do
-            owner service_user
-            group service_group
+            owner new_resource.service_user
+            group new_resource.service_group
             mode '0750'
             recursive true
             action :create
+            not_if { ::Dir.exist?(dir) }
           end
         end
 
-        if install_package
-          if url?(install_package)
+        if new_resource.install_package
+          if url?(new_resource.install_package)
             local_file = local_installer_file
 
             remote_file local_file do
-              source install_package
-              owner service_user
-              group service_group
+              source new_resource.install_package
+              owner new_resource.service_user
+              group new_resource.service_group
               mode '0750'
-              checksum install_package_sha256
+              checksum new_resource.install_package_sha256
               action :create
             end
           end
@@ -97,26 +99,28 @@ module InstallMgrCookbook
 
           case ext
           when '.gz'
-            extract_tar(local_file, extract_dir)
+            extract_tar(local_file, new_resource.extract_dir)
           when '.tar'
-            extract_tar(local_file, extract_dir)
+            extract_tar(local_file, new_resource.extract_dir)
           when '.zip'
-            extract_zip(local_file, extract_dir)
+            extract_zip(local_file, new_resource.extract_dir)
           else
             Chef::Log.error('Unable to extract ibm Installation Manager Install package. It must be either tar, tar.gz or zip')
           end
 
         end
 
-        repositories_str = repositories.join(', ') if repositories
+        repositories_str = new_resource.repositories.join(', ') if new_resource.repositories
 
-        cmd = "./imcl install \"#{package_name}\" "\
-        "-installationDirectory \"#{install_dir}\" -accessRights \"#{access_rights}\" "\
-        "-acceptLicense -dataLocation \"#{data_location}\" -preferences #{preferences}"
-        cmd << " -repositories '#{repositories_str}' " if repositories
+        cmd = "./imcl install \"#{new_resource.package_name}\" "\
+        "-installationDirectory \"#{new_resource.install_dir}\" "\
+        "-accessRights \"#{new_resource.access_rights}\" "\
+        "-acceptLicense -dataLocation \"#{new_resource.data_location}\" "\
+        " -preferences #{new_resource.preferences}"
+        cmd << " -repositories '#{repositories_str}' " if new_resource.repositories
 
-        execute "install im #{package_name}" do
-          cwd "#{extract_dir}/tools"
+        execute "install im #{new_resource.package_name}" do
+          cwd "#{new_resource.extract_dir}/tools"
           command cmd
           action :run
         end
@@ -128,17 +132,17 @@ module InstallMgrCookbook
     # so they are available in the action.
     action_class.class_eval do
       def url?(string)
-        checks = %w(http https)
+        checks = %w[http https file]
         checks.any? { |str| string.include? str }
       end
 
       # helper function to return valid path to installer zip/tar
       def local_installer_file
-        if url?(install_package)
-          filename = ::File.basename(install_package)
-          local_file = "#{download_temp_dir}/#{filename}"
+        if url?(new_resource.install_package)
+          filename = ::File.basename(new_resource.install_package)
+          local_file = "#{new_resource.download_temp_dir}/#{filename}"
         else
-          local_file = install_package
+          local_file = new_resource.install_package
         end
         local_file
       end

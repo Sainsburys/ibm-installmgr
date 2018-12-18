@@ -7,3 +7,21 @@ LineLength:
 ##  don't need class documentation header for custom resources.
 Documentation:
   Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%i': []
+    '%I': []
+    '%w': []
+    '%W': []
+    '%i': '[]'
+    '%I': '[]'
+    '%w': '[]'
+    '%W': '[]'
+

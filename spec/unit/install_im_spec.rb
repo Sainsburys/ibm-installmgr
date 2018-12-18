@@ -3,9 +3,8 @@ require 'spec_helper'
 describe 'ibm-im-test::install_im' do
   cached(:centos_67_install_im) do
     ChefSpec::ServerRunner.new(
-      step_into: 'install_mgr',
-      platform: 'centos',
-      version: '6.6'
+      file_cache_path: '/tmp/cache',
+      step_into: 'install_mgr'
     ) do
     end.converge('ibm-im-test::install_im')
   end
@@ -34,7 +33,12 @@ describe 'ibm-im-test::install_im' do
       expect(centos_67_install_im).to create_group('ibm-im')
     end
 
-    dirs = %w(ibm_root_dir extract_dir install_dir data_location)
+    dirs = %w[
+      /opt/IBM
+      /tmp/cache/ibm-installmgr
+      /opt/IBM/InstallationManager/eclipse
+      /var/IBM/InstallationManager
+    ]
     it 'creates these directories' do
       dirs.each do |dir|
         expect(centos_67_install_im).to create_directory(dir).with(
