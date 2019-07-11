@@ -53,7 +53,7 @@ module InstallMgrCookbook
 
         directory "/home/#{new_resource.service_user}" do
           owner new_resource.service_user
-          group new_resource.service_user
+          group new_resource.service_group
           mode '0750'
           recursive true
           action :create
