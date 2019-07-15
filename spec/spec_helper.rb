@@ -9,6 +9,8 @@ RSpec.configure do |config|
   config.platform = 'centos'
   config.version = '6.8'
   config.log_level = :error
+  config.file_cache_path = '/tmp/cache'
+
   # Prohibit using the should syntax
   config.expect_with :rspec do |spec|
     spec.syntax = :expect

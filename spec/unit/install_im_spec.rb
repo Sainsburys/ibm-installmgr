@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe 'ibm-im-test::install_im' do
   cached(:centos_67_install_im) do
-    ChefSpec::ServerRunner.new(
-      file_cache_path: '/tmp/cache',
+    ChefSpec::SoloRunner.new(
       step_into: 'install_mgr'
     ) do
     end.converge('ibm-im-test::install_im')
