@@ -17,8 +17,6 @@
 # limitations under the License.
 #
 
-# rubocop:disable Metrics/ClassLength
-
 module InstallMgrCookbook
   class InstallMgr < Chef::Resource
     require_relative 'helpers'
@@ -171,5 +169,3 @@ module InstallMgrCookbook
     end
   end
 end
-
-# rubocop:enable Metrics/ClassLength
