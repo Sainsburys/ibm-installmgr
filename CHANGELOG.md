@@ -1,5 +1,10 @@
 # IBM Installation Manager Cookbook CHANGELOG
 
+v1.3.2
+--------------------
+
+- fix further home directory creation for group [#25]
+
 v1.3.1
 --------------------
 
