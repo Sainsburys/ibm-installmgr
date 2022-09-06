@@ -13,7 +13,7 @@ provisioner:
         password: <%= ENV['PASSPORTADV_PW'] %>
 
 platforms:
-  - name: centos-6.7
+  - name: centos-6.10
   - name: centos-7.2
   - name: ubuntu-14.04
   - name: ubuntu-12.04

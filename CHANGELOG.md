@@ -1,5 +1,10 @@
 # IBM Installation Manager Cookbook CHANGELOG
 
+v1.3.3
+--------------------
+
+- Ensure all LWRPs can run with Chef 16+ [#29]
+
 v1.3.2
 --------------------
 

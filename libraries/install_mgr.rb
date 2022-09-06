@@ -1,20 +1,8 @@
 #
-# Cookbook Name:: ibm-installmgr
+# Cookbook:: ibm-installmgr
 # Resource:: install_mgr
-#
-# Copyright (C) 2015-2018 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 #
 
 module InstallMgrCookbook
@@ -24,7 +12,7 @@ module InstallMgrCookbook
 
     resource_name :install_mgr
     property :install_package, String, required: true # can be url or local path to a compressed file
-    property :install_package_sha256, [String, nil], default: nil
+    property :install_package_sha256, [String, nil]
     property :download_temp_dir, String, default: Chef::Config['file_cache_path']
     property :extract_dir, String, default: lazy { "#{download_temp_dir}/ibm-installmgr" }
     property :install_dir, String, default: lazy { "#{ibm_root_dir}/InstallationManager/eclipse" }
@@ -37,7 +25,7 @@ module InstallMgrCookbook
     property :access_rights, String, default: 'admin', regex: /^(nonAdmin|admin|group)$/
     property :preferences, String, default: 'offering.service.repositories.areUsed=false'
 
-    provides :install_mgr if defined?(provides)
+    provides :install_mgr
 
     action :install do
       unless package_installed?(new_resource.package_name, "#{new_resource.install_dir}/tools")

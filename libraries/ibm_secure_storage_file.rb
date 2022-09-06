@@ -1,35 +1,25 @@
 
 #
-# Cookbook Name:: ibm-installmgr
+# Cookbook:: ibm-installmgr
 # Resource:: ibm_secure_storage_file
-#
-# Copyright (C) 2015-2018 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 #
 
 module InstallMgrCookbook
   class IbmSecureStorageFile < Chef::Resource
     resource_name :ibm_secure_storage_file
+    provides :ibm_secure_storage_file
+
     property :secure_file, String, name_property: true
-    property :master_pw_file, [String, nil], default: nil
-    property :master_pw, [String, nil], default: nil
+    property :master_pw_file, [String, nil]
+    property :master_pw, [String, nil]
     property :url, String, default: 'http://www.ibm.com/software/repositorymanager/entitled/repository.xml'
     property :imutilsc_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
-    property :passport_advantage, [TrueClass, FalseClass], default: false
-    property :username, [String, nil], default: nil
-    property :password, [String, nil], default: nil
-    property :sensitive_exec, [TrueClass, FalseClass], default: true
+    property :passport_advantage, [true, false], default: false
+    property :username, [String, nil]
+    property :password, [String, nil]
+    property :sensitive_exec, [true, false], default: true
 
     action :create do
       file new_resource.master_pw_file do
