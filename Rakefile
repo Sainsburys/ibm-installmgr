@@ -11,8 +11,6 @@ namespace :style do
   end
 
   begin
-    require 'foodcritic'
-
     desc 'Run Chef style checks'
     FoodCritic::Rake::LintTask.new(:chef) do |t|
       t.options = {

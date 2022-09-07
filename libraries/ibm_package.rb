@@ -1,21 +1,9 @@
-
 #
-# Cookbook Name:: ibm-installmgr
+# Cookbook:: ibm-installmgr
 # Resource:: ibm_package
 #
-# Copyright (C) 2015-2018 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 #
 
 module InstallMgrCookbook
@@ -27,21 +15,21 @@ module InstallMgrCookbook
     property :package, String, required: true # eg 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044'
     property :install_dir, String, required: true
     property :imcl_dir, String, default: '/opt/IBM/InstallationManager/eclipse/tools'
-    property :repositories, [String, Array, nil], default: nil
-    property :passport_advantage, [TrueClass, FalseClass], default: false
+    property :repositories, [String, Array, nil]
+    property :passport_advantage, [true, false], default: false
     property :service_user, String, default: 'ibm'
     property :service_group, String, default: 'ibm'
-    property :properties, [Hash, nil], default: nil
-    property :preferences, [Hash, nil], default: nil
+    property :properties, [Hash, nil]
+    property :preferences, [Hash, nil]
     property :install_fixes, String, default: 'none', regex: /^(none|recommended|all)$/
     property :additional_options, String, default: ''
     property :access_rights, String, default: 'admin', regex: /^(nonAdmin|admin|group)$/
     property :log_dir, String, default: '/var/IBM/InstallationManager/logs'
-    property :secure_storage_file, [String, nil], default: nil
-    property :master_pw_file, [String, nil], default: nil
-    property :sensitive_exec, [TrueClass, FalseClass], default: true # only turn this off in exceptional debugging circumstances.
+    property :secure_storage_file, [String, nil]
+    property :master_pw_file, [String, nil]
+    property :sensitive_exec, [true, false], default: true # only turn this off in exceptional debugging circumstances.
 
-    provides :ibm_package if defined?(provides)
+    provides :ibm_package
 
     action :install do
       unless package_installed?(new_resource.package, new_resource.imcl_dir)

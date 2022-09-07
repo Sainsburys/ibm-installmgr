@@ -7,7 +7,7 @@ end
 
 RSpec.configure do |config|
   config.platform = 'centos'
-  config.version = '6.8'
+  config.version = '6.10'
   config.log_level = :error
   config.file_cache_path = '/tmp/cache'
 
